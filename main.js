@@ -1,7 +1,18 @@
+/*
+  A simple memory and guessing game by StewVed.
+
+  ToDo:
+
+  allow the user to change the speed of the overall game.
+  user change colour scheme of the game.
+*/
+
+
 var nums = []
-  , scores = {correct:0, inARow:0, played:0}
   , buttons = 4
   , turns = 1
+  , scores = {correct:0, inARow:0, played:0}
+  , t = 600 //for how long something takes to animate... pause time.
   , threshold = 2
   , turn = 0;
 
@@ -9,6 +20,11 @@ window.addEventListener('resize', resize);
 window.addEventListener('click', userClick);
 window.addEventListener('dblclick', noBubble, false); //not triggered by double tapping touch :(
 /*
+because there is a pause with touch tapping, I think I should
+implement the entire touch and mouse down, move, up stuff after all.
+Also, it would be better to have the buttons change colour only when pressed,
+instead of an arbitrary time.
+
 window.addEventListener('mouseDown', userMdown);
 window.addEventListener('mousemove', userMmove);
 window.addEventListener('mouseup', userMup);
@@ -131,14 +147,14 @@ function newGame() {
   randNums(); //generate random array
 
   if (parseInt(document.getElementById('mem').value) == 1) {
-    window.setTimeout(function(){playSequence(0);}, 500);
+    window.setTimeout(function(){playSequence(0);}, (t * 2));
   }
 }
 
 function playSequence(x) {
   if (x < turns) {
-    ButtonBackColor(nums[x], 'hsla(220, 100%, 75%, 1)');
-    window.setTimeout(function(){playSequence(x + 1);}, 500);
+    ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
+    window.setTimeout(function(){playSequence(x + 1);}, t);
   }
 }
 
@@ -157,15 +173,15 @@ function levelProgress() {
   var num = 0;
   if (scores.inARow > 0) {
     num = scores.inARow;
-    document.getElementById('pi').style.left = (Math.round((num / threshold) *100) - 100) + '%';
+    document.getElementById('pi').style.left = (Math.round((num / threshold) * 100) - 100) + '%';
     document.getElementById('pf').style.left = '100%';
   }
   else if (scores.inARow < 0) {
     num = -scores.inARow;
-    var a = Math.round((num / threshold) *100);
+    var a = Math.round((num / threshold) * 100);
     var b = 100 - a;
     document.getElementById('pi').style.left = '-100%';
-    document.getElementById('pf').style.left = (100 - Math.round((num / threshold) *100)) + '%';
+    document.getElementById('pf').style.left = (100 - Math.round((num / threshold) * 100)) + '%';
   }
   else {
     document.getElementById('pf').style.left = '100%';
@@ -182,7 +198,7 @@ function endTurn() {
   if (Win) {
     zColor = 'green';
     scores.correct ++;
-    ButtonBackColor('game', 'hsla(127,66%,50%, 0.2)');
+    //ButtonBackColor('game', 'hsla(127,66%,50%, 0.2)');
 
     if (scores.inARow == threshold) {
       end1(1);
@@ -226,8 +242,8 @@ function endY() {
       document.getElementById('pi').style.left = '-100%';
       window.setTimeout(function(){
         document.getElementById('pi').style.width = '100%';
-      }, 500);
-    }, 500);
+      }, t);
+    }, t);
 }
 
 function endN() {
@@ -238,8 +254,8 @@ function endN() {
       document.getElementById('pf').style.left = '100%';
       window.setTimeout(function(){
         document.getElementById('pf').style.width = '100%';
-      }, 500);
-    }, 500);
+      }, t);
+    }, t);
 }
 
 
@@ -249,7 +265,7 @@ function ButtonBackColor(a, zColor) {
   window.setTimeout(function(){
     document.getElementById(a).style.transition = '.3s';
     document.getElementById(a).style.backgroundColor = 'transparent';
-  }, 300);
+  }, (t * .5));
 }
 
 function ButtonBackOpacity(a) {
@@ -258,7 +274,7 @@ function ButtonBackOpacity(a) {
   window.setTimeout(function(){
     document.getElementById(a).style.transition = '.3s';
     document.getElementById(a).style.opacity = 1;
-  }, 300);
+  }, (t * .6));
 }
 
 function userClick(e) {
@@ -266,6 +282,7 @@ function userClick(e) {
 
   if (isFinite(targ.id)) {
     //is a button
+    /*
     for (var x = 0; x < buttons; x++) {
       if (x != nums[turn]) {
         ButtonBackOpacity(x);
@@ -274,10 +291,12 @@ function userClick(e) {
         ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
       }
     }
-    
+    */
+    ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
+
     if (targ.id != nums[turn]) {
-      ButtonBackColor(targ.id, 'hsla(0,100%,50%, 1)');
-      ButtonBackColor('game', 'hsla(0,100%,50%, .2)');
+      ButtonBackColor(targ.id, 'hsla(0,100%,50%, .3)');
+      //ButtonBackColor('game', 'hsla(0,100%,50%, .2)');
       Win = 0; //you only lose if you get one wrong
       turn = (turns - 1); //end the round.
     }

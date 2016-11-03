@@ -4,6 +4,7 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   margin: 0;
+  transition: 0.25s;
 }
 
 .ting {
@@ -64,7 +65,6 @@ body {
 .uButtonGrey {
   background-color: #d5d5d5;
   background: linear-gradient(#eee, #999);
-  transition: 0.5s;
 }
 
 .uButtonGrey:hover {
@@ -133,6 +133,7 @@ body {
   border-radius: 640px;
   border: 2px solid black;
   text-align: left;
+  margin-bottom: 6px;
   background: linear-gradient(#eee, #999);
 }
 
