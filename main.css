@@ -128,6 +128,7 @@ body {
 #pc {
   width: 90%;
   position: relative;
+  box-sizing: border-box;
   overflow:hidden;
   margin: 0px auto;
   border-radius: 640px;
@@ -137,24 +138,27 @@ body {
   background: linear-gradient(#eee, #999);
 }
 
-#pi {
+#pa {
   position: absolute;
-  width: 100%;
+  top: 0px;
+  width: 300%;
   height: 100%;
-  top: 0%;
   left: -100%;
+  transition: left .5s;
+}
+
+#pi {
+  float: left;
+  width: 33.333%;
+  height: 100%;
   background: linear-gradient(#7e7, #191);
-  transition: .5s;
 }
 
 #pf {
-  position: absolute;
-  width: 100%;
-  top: 0%;
+  float: right;
+  width: 33.333%;
   height: 100%;
-  left: 100%;
   background: linear-gradient(#e77, #911);
-  transition: .5s;
 }
 
 #pt {

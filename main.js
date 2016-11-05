@@ -9,12 +9,14 @@
 
 
 var nums = []
+  , mem = 1
   , buttons = 4
+  , level = 1
   , turns = 1
-  , scores = {correct:0, inARow:0, played:0}
+  , turn = 0
+  , score = 0
   , t = 600 //for how long something takes to animate... pause time.
-  , threshold = 2
-  , turn = 0;
+  , threshold = 3;
 
 window.addEventListener('resize', resize);
 window.addEventListener('click', userClick);
@@ -63,14 +65,16 @@ function createSettings() {
 
   document.getElementById('score').innerHTML = 
   '<div id="scoreInner">' +
-    '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen " ' + butLeft + ' value="1">Memory</button>' +
-    '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + butRight + ' value="0">Guess</button>' +
+    '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen " ' + butLeft + '>Memory</button>' +
+    '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + butRight + '>Guess</button>' +
     '<br>' + 
     '<span id="scoreText">Turn:0</span>' +
 
     '<div id="pc">&nbsp;' +
-      '<div id="pi"></div>' +
-      '<div id="pf"></div>' +
+      '<div id="pa">&nbsp;' +
+        '<div id="pi"></div>' +
+        '<div id="pf"></div>' +
+      '</div>' +
       '<div id="pt" >Level: 1</div>' +
     '</div>' +
   '</div>' +
@@ -81,7 +85,7 @@ function createSettings() {
 function resize() {
   //maybe I should make the game bit a squre, then have the scores bit
   //however amount of space is left? what if the available area is squre?
-  
+
   //regardless, let's begin by finding the smallest size out of length and width:
   var a = window.innerWidth;
   var b = window.innerHeight;
@@ -99,7 +103,7 @@ function resize() {
 
   document.getElementById('game').style.fontSize = a * 1.5 + '%';
 
-  document.getElementById('game').style.width = 
+  document.getElementById('game').style.width =
   document.getElementById('game').style.height = a + 'px';
 
 
@@ -110,7 +114,7 @@ function resize() {
     var y = document.getElementById(x).style;
     y.width = y.height = y.borderRadius = // (document.body.offsetWidth / buttons) + 'px';
     y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
-    
+
     y.padding = y.borderWidth = Math.floor(a * .02) + 'px';
     y.margin = Math.floor(a * .01) + 'px';
   }
@@ -135,7 +139,7 @@ function resize() {
 
 function randNums() {
   nums = [];
-  for (var x = 0; x < turns; x++) {
+  for (var x = 0; x < level; x++) {
     // randomize which button is 'pressed' for each 'tick'
     nums.push(Math.round(Math.random() * (buttons - 1)));
   }
@@ -146,116 +150,110 @@ function newGame() {
   turn = 0;
   randNums(); //generate random array
 
-  if (parseInt(document.getElementById('mem').value) == 1) {
+  if (mem) {
     window.setTimeout(function(){playSequence(0);}, (t * 2));
   }
 }
 
 function playSequence(x) {
-  if (x < turns) {
-    ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
-    window.setTimeout(function(){playSequence(x + 1);}, t);
+  ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
+  x ++;
+
+  if (x < level) {
+    window.setTimeout(function(){playSequence(x);}, t);
   }
 }
 
-function score() {
-/*
-  var a = 0;
-  if (scores.played > 0) {
-    a = Math.floor((scores.correct / scores.played) * 100);
-  }
-*/
-  document.getElementById('scoreText').innerHTML = 'Turns: ' + scores.played;
-  document.getElementById('pt').innerHTML = 'Level: ' + turns;
+function updateScore() {
+  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
+  document.getElementById('pt').innerHTML = 'Level: ' + level;
 }
 
-function levelProgress() {
+function updateProgress() {
   var num = 0;
-  if (scores.inARow > 0) {
-    num = scores.inARow;
-    document.getElementById('pi').style.left = (Math.round((num / threshold) * 100) - 100) + '%';
-    document.getElementById('pf').style.left = '100%';
-  }
-  else if (scores.inARow < 0) {
-    num = -scores.inARow;
-    var a = Math.round((num / threshold) * 100);
-    var b = 100 - a;
-    document.getElementById('pi').style.left = '-100%';
-    document.getElementById('pf').style.left = (100 - Math.round((num / threshold) * 100)) + '%';
-  }
-  else {
-    document.getElementById('pf').style.left = '100%';
-    document.getElementById('pi').style.left = '-100%';
-  }
+  //new version is a div with the green and red divs inside it. This means I only have to 
+  //move that single div left or right
+  //the entire div is 300% the size of the level div
+  //middle is -100% = 0
+  //100% green is 0% to 100%
+  //100%  red  is -200% to -300%
 
+  //score is positive or negative, and 0 would equate to -100%
+  var t1 = score;
+  var t2 = threshold;
+  var t3 = t1 / t2;
+  var t4 = t3 * 100;
+  num = t4 - 100;
+
+  //right then, if threshold = 10, then -10 should be -200
+  
+
+  document.getElementById('pa').style.left = num.toFixed(2) + '%';
 }
 
 
 
 function endTurn() {
-  scores.played ++;
-  
-  if (Win) {
-    zColor = 'green';
-    scores.correct ++;
-    //ButtonBackColor('game', 'hsla(127,66%,50%, 0.2)');
+  //scores.played ++;
+  turns ++;
 
-    if (scores.inARow == threshold) {
-      end1(1);
-      endY();
+  if (Win) {
+    score ++;
+
+    if (score > threshold) {
+      end1(1, '100%');
     }
     else {
-      scores.inARow ++;
-      levelProgress();
+      updateProgress();
     }
   }
   else {
-    if (scores.inARow == -threshold) {
-      end1(-1);
-      endN();
+    score --;
+
+    if (score < -threshold) {
+      end1(-1, '-300%');
     }
     else {
-      scores.inARow --;
-      levelProgress();
+      updateProgress();
     }
   }
 
-  score();
+  updateScore();
   newGame();
 }
 
-function end1(num) {
-      turns += num;
+function end1(num, x) {
+  level += num;
 
-      if (turns < 1) {
-        turns = 1;
-      }
-      
-      scores.inARow = 0;
+  if (level < 1) {
+    level = 1;
+  }
+
+  score = 0;
+  document.getElementById('pa').style.left = x;
+  window.setTimeout(function(){
+    levelChange();
+  }, t);
+}
+
+function levelChange() {
+  // hide the progressbars, move to center, show bars again
+  document.getElementById('pa').style.opacity = '0';
+  document.getElementById('pa').style.left = '-100%';
+
+  window.setTimeout(function(){
+    document.getElementById('pa').style.opacity = '1';
+  }, t);
 }
 
 function endY() {
-    document.getElementById('pi').style.left = '100%';
-    document.getElementById('pi').style.width = '0%';
-
-    window.setTimeout(function(){
-      document.getElementById('pi').style.left = '-100%';
-      window.setTimeout(function(){
-        document.getElementById('pi').style.width = '100%';
-      }, t);
-    }, t);
+  document.getElementById('pi').style.left = '100%';
+  levelChange();
 }
 
 function endN() {
-    document.getElementById('pf').style.left = '-100%';
-    document.getElementById('pf').style.width = '0%';
-
-    window.setTimeout(function(){
-      document.getElementById('pf').style.left = '100%';
-      window.setTimeout(function(){
-        document.getElementById('pf').style.width = '100%';
-      }, t);
-    }, t);
+  document.getElementById('pf').style.left = '-300%';
+  levelChange();
 }
 
 
@@ -292,26 +290,30 @@ function userClick(e) {
       }
     }
     */
+
+    //turn the correct button green:
     ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
 
-    if (targ.id != nums[turn]) {
+    if (targ.id != nums[turn]) { //if the pressed button is not the correct button:
+      //turn the presssed button red:
       ButtonBackColor(targ.id, 'hsla(0,100%,50%, .3)');
-      //ButtonBackColor('game', 'hsla(0,100%,50%, .2)');
+      //user win = false!
       Win = 0; //you only lose if you get one wrong
-      turn = (turns - 1); //end the round.
+      //end the round now regardless of how many more clicks are left in this level.
+      turn = (level - 1);
     }
-
+    
     turn ++;
-    if (turn == turns) {
+    if (turn == level) {
         endTurn();
     }
   }
-  else if (targ.id === 'mem'){
-    targ.value = 1;
+  else if (targ.id === 'mem'){ //User pressed the 'Memory' button
+    mem = 1;
     swapButton('mem', 'ges');
   }
-  else if (targ.id === 'ges'){
-    document.getElementById('mem').value = 0;
+  else if (targ.id === 'ges'){ //User pressed the 'Guess' button
+    mem = 0;
     swapButton('ges', 'mem');
   }
 }
@@ -335,6 +337,10 @@ function swapButton(zEnable, zDisable) {
   document.getElementById(zEnable).classList.add('uButtonGreen');
   document.getElementById(zDisable).classList.remove('uButtonGreen');
   document.getElementById(zDisable).classList.add('uButtonGrey');
+  turns = 0;
+  level = 1;
+  score = 0;
+  updateScore();
   newGame();
 }
 
