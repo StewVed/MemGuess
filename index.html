@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <head>
-  <title>Guessing Game</title>
+  <title>Memory & Guessing Game</title>
   <link href="favicon.png" rel=icon>
   <link href="main.css" rel="stylesheet" type="text/css"/>
+  <meta content="Memory and guessing game by Stewart Robinson (StewVed)" name=description>
+  <meta content="StewVed,stewart,robinson,webapp,free,program,app,game,html5,javascript" name=keywords>
+  <meta content="Stewart Robinson (StewVed)" name=author>
+  <meta charset=UTF-8>
+  <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name=viewport>
 </head>
 <body>
-  <div id="game"></div>
+  <div id="game">
+    <div id="loading" style="position:relative;"></div>
+  </div>
   <div id="score"></div>
   <script>
     var a = document.createElement('script')
-    a.src = 'main.js';
+    a.src = 'loader.js';
     document.head.appendChild(a);
   </script>
 </body>
