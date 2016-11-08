@@ -71,6 +71,7 @@ function keyDown(e) {
   var theKey = keyNum(e);
 
   if (keysIgnore.indexOf(theKey) != -1) {
+    bubbleStop();
     keyVars.push(theKey); //simply add the newly pressed key into the WinKeys array.
   }
 
@@ -78,8 +79,10 @@ function keyDown(e) {
 
 function keyRedefine(theKey) {
 // left,up,right,down,A,B,X,Y   you can add more should your game require it.
+  var theKey = keyNum(e);
 
   if (keysCurrent.indexOf(theKey) != -1) {
+    bubbleStop();
     keyVars.push(theKey); //simply add the newly pressed key into the WinKeys array.
   }
 }
@@ -88,6 +91,7 @@ function keyUp(e) {
   var theKey = keyNum(e);
 
   while (keyVars.indexOf(theKey) != -1) {
+    bubbleStop();
     keyVars.splice(keyVars.indexOf(theKey), 1);//updates array length while delete() doesn't
   }
 }
@@ -117,6 +121,7 @@ function mouseClear() {
 }
 
 function mouseDown(e) {
+  bubbleStop(e);
   var targ = findTarget(e);
 
   mouseVars.button = null == e.which ? e.button : e.which;
@@ -129,8 +134,7 @@ function mouseDown(e) {
   mouseVars.xStart = e.clientX;
   mouseVars.yCurrent = e.clientY;
   mouseVars.yStart = e.clientY;
-  
-  bubbleStop(e);
+
 }
 
 function mouseMove(e) {
@@ -287,6 +291,7 @@ function touchChange(e) {
 }
 
 function touchDown(e) {
+  bubbleStop(e);
   var cTouches = e.changedTouches;
 
   for (var x = 0; x < cTouches.length; x++) {
@@ -304,6 +309,7 @@ function touchDown(e) {
 }
 
 function touchMove(e) {
+  bubbleStop(e);
   var cTouches = e.changedTouches;
 
   for (var x = 0; x < cTouches.length; x++) {
@@ -320,6 +326,7 @@ function touchMove(e) {
 }
 
 function touchUp(e) {
+  bubbleStop(e);
   var cTouches = e.changedTouches; //new array for all current events
 
   for (var x = 0; x < cTouches.length; x++) {

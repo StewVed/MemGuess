@@ -2,7 +2,7 @@ body {
   background-color: antiquewhite;
   text-align: center;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
   margin: 0;
   transition: 0.25s;
 }
@@ -27,6 +27,7 @@ body {
   vertical-align: middle;
   margin: 0;
   padding: 0;
+  overflow: overlay;
   float: left;
 }
 
@@ -44,7 +45,8 @@ body {
   margin: 0;
   padding: 1px 12px;
   color: black;
-  border: 2px solid black;
+  border:  solid black;
+  border-width: calc(1%);
   font-size: 75%;
   border-radius: 64px;
 }
@@ -113,18 +115,26 @@ body {
   border-left: 0;
 }
 
+#set {
+  float: left;
+  margin-left: 2%;
+  font-size: 66%;
+  line-height: 133%;
+  padding: .5% 2%;
+  
+}
+
 #pc {
-  width: 90%;
+  width: 60%;
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
-  margin: 0px auto;
+  margin: 0 1%;
   border-radius: 640px;
   border: 2px solid black;
-  text-align: left;
   margin-bottom: 6px;
-  /*font-size: 90%;*/
   background: linear-gradient(#eee, #999);
+  float:left;
 }
 
 #pa {
@@ -165,8 +175,8 @@ body {
   background:transparent;
   border:0;
   line-height: 100%;
-  margin-right: 2%;
-  float: right;
+  margin-left: 1%;
+  float: left;
   box-sizing: border-box;
   /*make it calculate the size including the margin*/
   font-weight: bold;
@@ -180,7 +190,7 @@ body {
 
 .fsu:hover {
   transform: scale(1.5,.95);
-  transition: 0.2s;
+  transition: 0.1s;
   opacity: 1;
 }
 .fsu:active {
@@ -196,7 +206,7 @@ body {
 
 .fsd:hover {
   transform: scale(1.25,.75);
-  transition: 0.2s;
+  transition: 0.1s;
   opacity: 1;
 }
 .fsd:active {

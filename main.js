@@ -1,10 +1,5 @@
 /*
   A simple memory and guessing game by StewVed.
-
-  ToDo:
-
-  allow the user to change the speed of the overall game.
-  user change colour scheme of the game.
 */
 var nums = []
   , mem = 1
@@ -16,21 +11,7 @@ var nums = []
   , t = 600 //for how long something takes to animate... pause time.
   , threshold = 3
   , playing = null ;
-/*
-window.addEventListener('resize', resize);
-window.addEventListener('click', userClick);
-window.addEventListener('dblclick', noBubble, false); //not triggered by double tapping touch :(
-*/
-/*
-because there is a pause with touch tapping, I think I should
-implement the entire touch and mouse down, move, up stuff after all.
-Also, it would be better to have the buttons change colour only when pressed,
-instead of an arbitrary time.
 
-window.addEventListener('mouseDown', userMdown);
-window.addEventListener('mousemove', userMmove);
-window.addEventListener('mouseup', userMup);
-*/
 function InitMain() {
   //load inputs file
   /*
@@ -57,20 +38,26 @@ function createSettings() {
   var butLeft = 'style="width:50%;"';
   var butRight = 'style="width:40%;padding-left:4px;margin-left:-1px;"';
   document.getElementById('score').innerHTML = 
-  '<div id="scoreInner">' + 
-  '<button id="set" type="button" class="uButtons uButtonsDisabled" style="float:left;margin-left:5%;">Settings</button>' + 
+'<div id="scoreInner">' + 
+  '<button id="set" type="button" class="uButtons">&#9776;</button>' + 
+  '<button id="pc" type="button" class="uButtons">&nbsp;' + 
+    '<div id="pa">' + 
+      '<div id="pi"></div>' + 
+      '<div id="pf"></div>' + 
+    '</div>' + 
+    '<div id="pt">Level: 1</div>' + 
+  '</button>' +
   '<div id="fs" class="fsButton fsu">&#9974;</div>' +
-  '<br>' +
-  '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear: both;" ' + butLeft + '>Memory</button>' + 
-  '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + butRight + '>Guess</button>' + 
-  '<br>' +
   '<span id="scoreText">Turn:0</span>' +
   '<br>' +
-  '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">&nbsp;' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt" >Level: 1</div>' + '</div>' + '</button>' + '';
+  '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear: both;" ' + butLeft + '>Memory</button>' + 
+  '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + butRight + '>Guess</button>' +
+'</div>' ;
+
 }
 function resize() {
   //maybe I should make the game bit a squre, then have the scores bit
-  //however amount of space is left? what if the available area is squre?
+  //however amount of space is left? what if the available area is square?
   //regardless, let's begin by finding the smallest size out of length and width:
   var a = window.innerWidth;
   var b = window.innerHeight;
@@ -83,6 +70,7 @@ function resize() {
     b = c;
     portraitLayout = 0;
   }
+  //simple method of scaling the entire thing - make the font size a percent of the space.
   document.getElementById('game').style.fontSize = a * 1.5 + '%';
   document.getElementById('game').style.width = document.getElementById('game').style.height = a + 'px';
   /*
@@ -91,7 +79,7 @@ function resize() {
   if (document.getElementById('0')) {
     for (var x = 0; x < buttons; x++) {
       var y = document.getElementById(x).style;
-      y.width = y.height = y.borderRadius = // (document.body.offsetWidth / buttons) + 'px';
+      y.width = y.height = y.borderRadius =
       y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
       y.padding = y.borderWidth = Math.floor(a * .02) + 'px';
       y.margin = Math.floor(a * .01) + 'px';
@@ -101,12 +89,19 @@ function resize() {
     document.getElementById('score').style.width = a + 'px';
     document.getElementById('score').style.height = (b - a) + 'px';
     document.getElementById('score').style.fontSize = a + '%';
+
+    //extra bit in case there isn't much space left - say the display is closer to a square:
+    if (document.getElementById('score').offsetHeight < document.getElementById('scoreInner').offsetHeight) {
+
+    }
   } else {
     //score is beside the game
     document.getElementById('score').style.width = (b - a) + 'px';
     document.getElementById('score').style.height = a + 'px';
     document.getElementById('score').style.fontSize = (b - a) + '%';
   }
+
+
   document.getElementById('scoreInner').style.top = ((document.getElementById('score').offsetHeight / 2) - (document.getElementById('scoreInner').offsetHeight / 2)) + 'px';
 }
 function randNums() {
