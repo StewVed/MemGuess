@@ -268,8 +268,11 @@ function mouseClick(){
     mem = 0;
     swapButton('ges', 'mem');
   }
-  else if (targ.id === 'fs'){ //User pressed the 'Guess' button
+  else if (targ.id === 'fsI' || targ.id === 'fs'){ //fullscreen button
     fullScreenToggle();
+  }
+  else if (targ.id === 'set'){ //settings button
+    toggleSettings();
   }
 }
 

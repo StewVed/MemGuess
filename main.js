@@ -11,7 +11,6 @@ var nums = []
   , t = 600 //for how long something takes to animate... pause time.
   , threshold = 3
   , playing = null ;
-
 function InitMain() {
   //load inputs file
   /*
@@ -21,39 +20,26 @@ function InitMain() {
     have an array of random numbers pushed into it
     array is populated before the user chooses, so it is fixed...
     not ased on when the user clicks and other factors.
-
-  */
+*/
+  document.body.innerHTML = '<div id="cont">' + '<div id="game">' + createButtons() + '</div>' + '<div id="score">' + createScore() + '</div>' + '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>' + '</div>' + '';
+  resize();
+  newGame();
+}
+function createButtons() {
   var sdf = '';
   //create empty string
   for (var x = 0; x < buttons; x++) {
     //add element to be a button
     sdf += '<div id = "' + x + '" class="ting">' + (x + 1) + '</div>';
   }
-  document.getElementById('game').innerHTML = sdf;
-  createSettings();
-  resize();
-  newGame();
+  return sdf;
+}
+function createScore() {
+  //document.getElementById('score').innerHTML =
+  return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">Level: 1</div>' + '</button>' + '</div>' + '';
 }
 function createSettings() {
-  var butLeft = 'style="width:50%;"';
-  var butRight = 'style="width:40%;padding-left:4px;margin-left:-1px;"';
-  document.getElementById('score').innerHTML = 
-'<div id="scoreInner">' + 
-  '<button id="set" type="button" class="uButtons">&#9776;</button>' + 
-  '<button id="pc" type="button" class="uButtons">&nbsp;' + 
-    '<div id="pa">' + 
-      '<div id="pi"></div>' + 
-      '<div id="pf"></div>' + 
-    '</div>' + 
-    '<div id="pt">Level: 1</div>' + 
-  '</button>' +
-  '<div id="fs" class="fsButton fsu">&#9974;</div>' +
-  '<span id="scoreText">Turn:0</span>' +
-  '<br>' +
-  '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear: both;" ' + butLeft + '>Memory</button>' + 
-  '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + butRight + '>Guess</button>' +
-'</div>' ;
-
+  return '<div id="scoreText">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '';
 }
 function resize() {
   //maybe I should make the game bit a squre, then have the scores bit
@@ -71,38 +57,34 @@ function resize() {
     portraitLayout = 0;
   }
   //simple method of scaling the entire thing - make the font size a percent of the space.
+  document.getElementById('game').style.width = document.getElementById('game').style.height = document.getElementById('settns').style.width = document.getElementById('settns').style.height = document.getElementById('scoreInner').style.width = document.getElementById('scoreInner').style.height = a + 'px';
   document.getElementById('game').style.fontSize = a * 1.5 + '%';
-  document.getElementById('game').style.width = document.getElementById('game').style.height = a + 'px';
-  /*
-    make the circles the correct size.
+  /* 
+     make the circles the correct size.
   */
   if (document.getElementById('0')) {
     for (var x = 0; x < buttons; x++) {
       var y = document.getElementById(x).style;
-      y.width = y.height = y.borderRadius =
-      y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
+      y.width = y.height = y.borderRadius = y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
       y.padding = y.borderWidth = Math.floor(a * .02) + 'px';
       y.margin = Math.floor(a * .01) + 'px';
     }
   }
+  document.getElementById('scoreInner').style.fontSize = document.getElementById('settns').style.fontSize = a + '%';
   if (portraitLayout) {
-    document.getElementById('score').style.width = a + 'px';
-    document.getElementById('score').style.height = (b - a) + 'px';
-    document.getElementById('score').style.fontSize = a + '%';
-
-    //extra bit in case there isn't much space left - say the display is closer to a square:
-    if (document.getElementById('score').offsetHeight < document.getElementById('scoreInner').offsetHeight) {
-
-    }
+    document.getElementById('scoreInner').style.transform = 'rotate(0deg)';
+    document.getElementById('score').style.width = '100%';
+    document.getElementById('score').style.height = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
+    document.getElementById('cont').style.top = Math.round((b / 2) - (document.getElementById('cont').offsetHeight / 2)) + 'px';
+    document.getElementById('cont').style.left = '0px';
   } else {
     //score is beside the game
-    document.getElementById('score').style.width = (b - a) + 'px';
-    document.getElementById('score').style.height = a + 'px';
-    document.getElementById('score').style.fontSize = (b - a) + '%';
+    document.getElementById('scoreInner').style.transform = 'rotate(-90deg)';
+    document.getElementById('score').style.height = '100%';
+    document.getElementById('score').style.width = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
+    document.getElementById('cont').style.left = Math.round((b / 2) - (document.getElementById('cont').offsetWidth / 2)) + 'px';
+    document.getElementById('cont').style.top = '0px';
   }
-
-
-  document.getElementById('scoreInner').style.top = ((document.getElementById('score').offsetHeight / 2) - (document.getElementById('scoreInner').offsetHeight / 2)) + 'px';
 }
 function randNums() {
   nums = [];
@@ -227,24 +209,30 @@ function swapButton(zEnable, zDisable) {
   level = 1;
   score = 0;
   updateScore();
-  newGame();
+  updateProgress();
 }
 // fullscreen handling from webtop then simplified for this project...
 function fullScreenToggle() {
   var isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-
   if (isFS) {
     killFS.call(document, function() {});
     if (document.getElementById('fs')) {
       document.getElementById('fs').classList.remove('fsd')
       document.getElementById('fs').classList.add('fsu');
     }
-  }
-  else {
+  } else {
     getFS.call(document.documentElement, function() {});
     if (document.getElementById('fs')) {
       document.getElementById('fs').classList.remove('fsu')
       document.getElementById('fs').classList.add('fsd');
     }
   }
+}
+function toggleSettings() {
+  if (document.getElementById('settns').style.visibility === 'hidden') {
+    document.getElementById('settns').style.visibility = 'visible';
+  } else {
+    document.getElementById('settns').style.visibility = 'hidden';
+  }      
+  newGame();
 }
