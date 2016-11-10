@@ -135,6 +135,10 @@ function mouseDown(e) {
   mouseVars.yCurrent = e.clientY;
   mouseVars.yStart = e.clientY;
 
+  //look for volume control slider
+  if (targ.id.slice(0,3) === 'vol') {
+    volDown();
+  }
 }
 
 function mouseMove(e) {
@@ -168,7 +172,10 @@ function mouseMove(e) {
   mouseVars.xCurrent = e.clientX;
   mouseVars.yCurrent = e.clientY;
 
-  if (mouseVars.type == 'click') {
+  if (mouseVars.type == 'vol') {
+    volMove();
+  }
+  else if (mouseVars.type == 'click') {
     if (
       ((mouseVars.xStart + 5) < e.clientX) || ((mouseVars.xStart - 5) > e.clientX) ||
       ((mouseVars.yStart + 5) < e.clientY) || ((mouseVars.yStart - 5) > e.clientY)
@@ -230,18 +237,8 @@ function mouseWheel(e) {
 function mouseClick(){
   var targ = mouseVars.targetStart;
 
-  if (isFinite(targ.id)) {
+  if (!randing && isFinite(targ.id)) {
     //is a button
-    /*
-    for (var x = 0; x < buttons; x++) {
-      if (x != nums[turn]) {
-        ButtonBackOpacity(x);
-      }
-      else {
-        ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
-      }
-    }
-    */
 
     //turn the correct button green:
     ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
@@ -256,6 +253,7 @@ function mouseClick(){
     }
 
     turn ++;
+    soundBeep('sine', 750, 1, 100);
     if (turn == level) {
         endTurn();
     }
@@ -350,3 +348,38 @@ function touchUp(e) {
 }
 
 
+
+function volDown() {
+  mouseVars.targetStart = document.getElementById('vol-Iv');
+  mouseVars.type = 'vol';
+  volMove();
+}
+
+function volMove() {
+  //find the percentage of the the slider's left
+  var zWidth = mouseVars.targetStart.parentNode.offsetWidth;
+  var zLeft = mouseVars.targetStart.parentNode.offsetLeft;
+  var sliderLeft = mouseVars.xCurrent - zLeft + 2;
+
+  sliderLeft -= (mouseVars.targetStart.offsetWidth / 2);
+
+  var sliderPercent = (sliderLeft / (zWidth - mouseVars.targetStart.offsetWidth)) * 100;
+
+  if (sliderPercent < 0) {
+      sliderPercent = 0;
+  }
+  else if (sliderPercent > 100) {
+      sliderPercent = 100;
+  }
+
+  globVol = sliderPercent / 100;
+
+  document.getElementById('vol%').innerHTML = Math.round(sliderPercent) + '%';
+
+  //recalculate to offset width of the slider iteself
+  var zDiff = (zWidth - mouseVars.targetStart.offsetWidth) / zWidth;
+
+  sliderPercent *= zDiff;
+
+  mouseVars.targetStart.style.left = sliderPercent + '%';
+}

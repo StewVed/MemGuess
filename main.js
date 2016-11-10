@@ -2,6 +2,8 @@
   A simple memory and guessing game by StewVed.
 */
 var nums = []
+  , globVol = .33
+  , randing = 0
   , mem = 1
   , buttons = 4
   , level = 1
@@ -36,10 +38,11 @@ function createButtons() {
 }
 function createScore() {
   //document.getElementById('score').innerHTML =
-  return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">Level: 1</div>' + '</button>' + '</div>' + '';
+  return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">Level: 1</div>' + '</button>' + '</div>' + '<div style="float:left;margin-right:6px;font-size:100%;transform:scaleX(2);">&#9698;</div>' + '';
 }
 function createSettings() {
-  return '<div id="scoreText">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '';
+  return '<div id="scoreText">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '<br>' + '<div class="vImg">&#9698;</div>' + '<div id="vol%" style="display:inline-block;">33%</div>' + '<div id="vol-Cv" class="sliderCont">&nbsp;' + '<div id="vol-Iv" class="sliderInner">&nbsp;</div>' + //Off ♫ &#128266;
+  '</div>' + '';
 }
 function resize() {
   //maybe I should make the game bit a squre, then have the scores bit
@@ -94,23 +97,31 @@ function randNums() {
   }
 }
 function newGame() {
+  window.clearTimeout(playing);
+  playing = null ;
   Win = 1;
   turn = 0;
+  randing = 1;
   randNums();
   //generate random array
   if (mem) {
     playing = window.setTimeout(function() {
       playSequence(0);
     }, (t * 2));
+  } else {
+    randing = 0;
   }
 }
 function playSequence(x) {
   ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
+  soundBeep('sine', 500, 1, 100);
   x++;
   if (x < level) {
     playing = window.setTimeout(function() {
       playSequence(x);
     }, t);
+  } else {
+    randing = 0;
   }
 }
 function updateScore() {
@@ -139,14 +150,26 @@ function endTurn() {
   turns++;
   if (Win) {
     score++;
+    setTimeout(function() {
+      soundBeep('sine', 1000, 1, 100)
+    }, 100);
     if (score > threshold) {
+      setTimeout(function() {
+        soundBeep('sine', 1500, 1, 100)
+      }, 200);
       end1(1, '100%');
     } else {
       updateProgress();
     }
   } else {
     score--;
+    setTimeout(function() {
+      soundBeep('sine', 500, 1, 100)
+    }, 100);
     if (score < -threshold) {
+      setTimeout(function() {
+        soundBeep('sine', 330, 1, 100)
+      }, 200);
       end1(-1, '-300%');
     } else {
       updateProgress();
@@ -174,14 +197,6 @@ function levelChange() {
     document.getElementById('pa').style.opacity = '1';
   }, t);
 }
-function endY() {
-  document.getElementById('pi').style.left = '100%';
-  levelChange();
-}
-function endN() {
-  document.getElementById('pf').style.left = '-300%';
-  levelChange();
-}
 function ButtonBackColor(a, zColor) {
   document.getElementById(a).style.transition = '0s';
   document.getElementById(a).style.backgroundColor = zColor;
@@ -190,21 +205,13 @@ function ButtonBackColor(a, zColor) {
     document.getElementById(a).style.backgroundColor = 'transparent';
   }, (t * .5));
 }
-function ButtonBackOpacity(a) {
-  document.getElementById(a).style.transition = '0s';
-  document.getElementById(a).style.opacity = .1;
-  window.setTimeout(function() {
-    document.getElementById(a).style.transition = '.3s';
-    document.getElementById(a).style.opacity = 1;
-  }, (t * .6));
-}
 function swapButton(zEnable, zDisable) {
   document.getElementById(zEnable).classList.remove('uButtonGrey');
   document.getElementById(zEnable).classList.add('uButtonGreen');
   document.getElementById(zDisable).classList.remove('uButtonGreen');
   document.getElementById(zDisable).classList.add('uButtonGrey');
   window.clearTimeout(playing);
-  playing = null ;
+  playing = null;
   turns = 0;
   level = 1;
   score = 0;
@@ -233,6 +240,34 @@ function toggleSettings() {
     document.getElementById('settns').style.visibility = 'visible';
   } else {
     document.getElementById('settns').style.visibility = 'hidden';
-  }      
+  }
   newGame();
+}
+// example: soundBeep('sine', 500, 1, 100);setTimeout(function(){soundBeep('sine', 750, 1, 100)}, 100);
+function soundBeep(type, frequency, volume, duration) {
+  //make the volume comform to the globally set volume
+  volume *= globVol;
+  //create a HTML5 audio occilator thingy
+  var zOscillator = WinAudioCtx.createOscillator();
+  //create a HTML5 audio volume thingy
+  var zGain = WinAudioCtx.createGain();
+  //link the volume to the occilator
+  zOscillator.connect(zGain);
+  zGain.connect(WinAudioCtx.destination);
+  //set up the audio beep to what is needed:
+  zOscillator.type = type;
+  //default = 'sine' — other values are 'square', 'sawtooth', 'triangle' and 'custom'
+  zOscillator.frequency.value = frequency;
+  zGain.gain.value = volume;
+  //start the audio beep, and set a timeout to stop it:
+  zOscillator.start();
+  setTimeout(function() {
+    setTimeout(function() {
+      zOscillator.stop()
+    }, 25);
+    //stop once the volume is riiiight down.
+    zGain.gain.value = 0.001;
+    //hopefully stop that cilck at the end that can happen.
+  }, duration);
+  //default to qurter of a second for the beep if no time is specified
 }

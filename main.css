@@ -25,7 +25,7 @@ body {
 }
 
 #cont {
-  position:absolute;
+  position: absolute;
   text-align: center;
 }
 
@@ -176,13 +176,12 @@ body {
   font-weight: bolder;
   display: inline-block;
   padding-top: 4px;
-  line-height: 80%;1% */
-  padding-top: 1;
+  line-height: 80%;
+  1% */ padding-top: 1;
 }
 
 #set {
   display: inline-block;
-  /* float: left; */
   margin-left: 2%;
   padding: 0% 2.5% 1% 2.5%;
   line-height: 100%;
@@ -198,4 +197,36 @@ body {
   height: 100%;
   width: 100%;
   background-color: antiquewhite;
+}
+
+.vImg {
+  display: inline-block;
+  margin-right: 6%;
+  transform: scaleX(2);
+}
+
+.sliderCont {
+  margin: 1% 0%;
+  background: linear-gradient(#ddd, #777);
+  border: 1px solid #000;
+  border-radius: 640px;
+  clear: both;
+  width: 90%;
+  left: 5%;
+  position: relative;
+  font-size: 0.2em;
+  overflow: visible;
+  height: 5%;
+}
+
+.sliderInner {
+  position: relative;
+  border-radius: 64px;
+  background: radial-gradient(farthest-side at 33% 33% , #fff, #333);
+  border: 1px solid #000;
+  top: -140%;
+  left: 28.4%;
+  box-sizing: border-box;
+  width: 14%;
+  height: 250%;
 }
