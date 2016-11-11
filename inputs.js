@@ -250,6 +250,10 @@ function mouseClick(){
       Win = 0; //you only lose if you get one wrong
       //end the round now regardless of how many more clicks are left in this level.
       turn = (level - 1);
+      score --;
+    }
+    else {
+      score ++;
     }
 
     turn ++;

@@ -7,11 +7,11 @@ var nums = []
   , mem = 1
   , buttons = 4
   , level = 1
-  , turns = 1
+  , turns = 0
+  , threshold = 3
   , turn = 0
   , score = 0
   , t = 600 //for how long something takes to animate... pause time.
-  , threshold = 3
   , playing = null ;
 function InitMain() {
   //load inputs file
@@ -104,6 +104,12 @@ function newGame() {
   randing = 1;
   randNums();
   //generate random array
+
+  //check 
+  if (level != nums.length) {
+    var wtf = 'ffs';
+  }
+
   if (mem) {
     playing = window.setTimeout(function() {
       playSequence(0);
@@ -116,7 +122,7 @@ function playSequence(x) {
   ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
   soundBeep('sine', 500, 1, 100);
   x++;
-  if (x < level) {
+  if (x < nums.length) {
     playing = window.setTimeout(function() {
       playSequence(x);
     }, t);
@@ -148,33 +154,28 @@ function updateProgress() {
 function endTurn() {
   //scores.played ++;
   turns++;
+
   if (Win) {
-    score++;
-    setTimeout(function() {
+    window.setTimeout(function() {
       soundBeep('sine', 1000, 1, 100)
     }, 100);
-    if (score > threshold) {
-      setTimeout(function() {
+    if (score >= threshold) {
+      end1(1, '100%');
+      window.setTimeout(function() {
         soundBeep('sine', 1500, 1, 100)
       }, 200);
-      end1(1, '100%');
-    } else {
-      updateProgress();
-    }
   } else {
-    score--;
-    setTimeout(function() {
+    window.setTimeout(function() {
       soundBeep('sine', 500, 1, 100)
     }, 100);
-    if (score < -threshold) {
-      setTimeout(function() {
-        soundBeep('sine', 330, 1, 100)
-      }, 200);
+    if (score <= -threshold) {
       end1(-1, '-300%');
-    } else {
-      updateProgress();
-    }
+      window.setTimeout(function() {
+        soundBeep('sine', 330, 1, 100);
+      }, 200);
   }
+
+  updateProgress();
   updateScore();
   newGame();
 }
@@ -183,11 +184,13 @@ function end1(num, x) {
   if (level < 1) {
     level = 1;
   }
-  score = 0;
-  document.getElementById('pa').style.left = x;
+  window.setTimeout(function() {
+    score = 0;
+    document.getElementById('pa').style.left = x;
+  }, t);
   window.setTimeout(function() {
     levelChange();
-  }, t);
+  }, t * 2);
 }
 function levelChange() {
   // hide the progressbars, move to center, show bars again
@@ -198,12 +201,14 @@ function levelChange() {
   }, t);
 }
 function ButtonBackColor(a, zColor) {
-  document.getElementById(a).style.transition = '0s';
-  document.getElementById(a).style.backgroundColor = zColor;
-  window.setTimeout(function() {
-    document.getElementById(a).style.transition = '.3s';
-    document.getElementById(a).style.backgroundColor = 'transparent';
-  }, (t * .5));
+  if (document.getElementById(a)) {
+    document.getElementById(a).style.transition = '0s';
+    document.getElementById(a).style.backgroundColor = zColor;
+    window.setTimeout(function() {
+      document.getElementById(a).style.transition = '.3s';
+      document.getElementById(a).style.backgroundColor = 'transparent';
+    }, (t * .5));
+  }
 }
 function swapButton(zEnable, zDisable) {
   document.getElementById(zEnable).classList.remove('uButtonGrey');
@@ -261,8 +266,8 @@ function soundBeep(type, frequency, volume, duration) {
   zGain.gain.value = volume;
   //start the audio beep, and set a timeout to stop it:
   zOscillator.start();
-  setTimeout(function() {
-    setTimeout(function() {
+  window.setTimeout(function() {
+    window.setTimeout(function() {
       zOscillator.stop()
     }, 25);
     //stop once the volume is riiiight down.
