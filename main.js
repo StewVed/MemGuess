@@ -2,15 +2,15 @@
   A simple memory and guessing game by StewVed.
 */
 var nums = []
-  , globVol = .33
-  , randing = 0
-  , mem = 1
-  , buttons = 4
-  , level = 1
-  , turns = 0
-  , threshold = 3
-  , turn = 0
-  , score = 0
+  , globVol = .33 //the volume of the beeps in the game.
+  , randing = 0   //whether the game is generating and playing the new number sequence
+  , mem = 1       //memory or guessing mode
+  , buttons = 4   //how many buttons to use in the game - 4 by default
+  , level = 1     //starting/current level
+  , threshold = 4 //turns until the next level up/down
+  , turns = 0     //the total number of turns played this game
+  , combo = 0     //the current combo nunmber of the turn
+  , score = 0     //current score for this level
   , t = 600 //for how long something takes to animate... pause time.
   , playing = null ;
 function InitMain() {
@@ -127,7 +127,9 @@ function playSequence(x) {
       playSequence(x);
     }, t);
   } else {
-    randing = 0;
+    playing = window.setTimeout(function() {
+      randing = 0;
+    }, (t/2));
   }
 }
 function updateScore() {
@@ -152,40 +154,46 @@ function updateProgress() {
   document.getElementById('pa').style.left = num.toFixed(2) + '%';
 }
 function endTurn() {
-  //scores.played ++;
+  combo = 0;
   turns++;
 
   if (Win) {
+    score ++;
     window.setTimeout(function() {
       soundBeep('sine', 1000, 1, 100)
     }, 100);
-    if (score >= threshold) {
-      end1(1, '100%');
-      window.setTimeout(function() {
-        soundBeep('sine', 1500, 1, 100)
-      }, 200);
-  } else {
+  }
+  else {
+    score --;
     window.setTimeout(function() {
       soundBeep('sine', 500, 1, 100)
     }, 100);
-    if (score <= -threshold) {
-      end1(-1, '-300%');
-      window.setTimeout(function() {
-        soundBeep('sine', 330, 1, 100);
-      }, 200);
   }
 
   updateProgress();
+
+  if (score >= threshold) {
+    end1(1, '100%');
+    window.setTimeout(function() {
+      soundBeep('sine', 1500, 1, 100)
+    }, 200);
+  }
+  else if (score <= -threshold) {
+    end1(-1, '-300%');
+    window.setTimeout(function() {
+      soundBeep('sine', 330, 1, 100);
+    }, 200);
+  }
   updateScore();
   newGame();
 }
 function end1(num, x) {
+  score = 0;
   level += num;
   if (level < 1) {
     level = 1;
   }
   window.setTimeout(function() {
-    score = 0;
     document.getElementById('pa').style.left = x;
   }, t);
   window.setTimeout(function() {
@@ -245,13 +253,14 @@ function toggleSettings() {
     document.getElementById('settns').style.visibility = 'visible';
   } else {
     document.getElementById('settns').style.visibility = 'hidden';
+    newGame();
   }
-  newGame();
 }
 // example: soundBeep('sine', 500, 1, 100);setTimeout(function(){soundBeep('sine', 750, 1, 100)}, 100);
 function soundBeep(type, frequency, volume, duration) {
   //make the volume comform to the globally set volume
   volume *= globVol;
+  volume*= .5; //make the entire game queiter.
   //create a HTML5 audio occilator thingy
   var zOscillator = WinAudioCtx.createOscillator();
   //create a HTML5 audio volume thingy

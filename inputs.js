@@ -241,26 +241,25 @@ function mouseClick(){
     //is a button
 
     //turn the correct button green:
-    ButtonBackColor(nums[turn], 'hsla(127,66%,50%, 1)');
+    ButtonBackColor(nums[combo], 'hsla(127,66%,50%, 1)');
 
-    if (targ.id != nums[turn]) { //if the pressed button is not the correct button:
+    if (targ.id != nums[combo]) { //if the pressed button is not the correct button:
       //turn the presssed button red:
       ButtonBackColor(targ.id, 'hsla(0,100%,50%, .3)');
       //user win = false!
       Win = 0; //you only lose if you get one wrong
       //end the round now regardless of how many more clicks are left in this level.
-      turn = (level - 1);
-      score --;
-    }
-    else {
-      score ++;
+      combo = (level - 1);
     }
 
-    turn ++;
-    soundBeep('sine', 750, 1, 100);
-    if (turn == level) {
-        endTurn();
+    combo ++;
+    if(combo >= level) {
+      
+      endTurn();
     }
+
+    soundBeep('sine', 750, 1, 100);
+
   }
   else if (targ.id === 'mem'){ //User pressed the 'Memory' button
     mem = 1;
