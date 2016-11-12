@@ -225,6 +225,11 @@ function mouseUp(e) {
     }
   }
 
+  //extra bit for moving the volume, so it's new value can be saved.
+  if (mouseVars.type == 'vol') {
+    storageSave('vol', globVol.toFixed(2)); //no point in recording something like 15.00000033
+  }
+
   mouseClear();
 }
 
@@ -237,7 +242,7 @@ function mouseWheel(e) {
 function mouseClick(){
   var targ = mouseVars.targetStart;
 
-  if (!randing && isFinite(targ.id)) {
+  if (!randing && isFinite(parseInt(targ.id))) {
     //is a button
 
     //turn the correct button green:
@@ -275,6 +280,14 @@ function mouseClick(){
   else if (targ.id === 'set'){ //settings button
     toggleSettings();
   }
+  else if (targ.id === 'notyClose'){ //Notify popup close button
+    //close the notifier
+    document.getElementById('noty').parentNode.removeChild(document.getElementById('noty'));
+  }
+  else if (targ.id.slice(0,4) === 'stor'){ //Storage Notify Yes button
+    storageChoose(targ.id.slice(-1))
+  }
+
 }
 
 function mouseLongClick () {
@@ -361,7 +374,7 @@ function volDown() {
 function volMove() {
   //find the percentage of the the slider's left
   var zWidth = mouseVars.targetStart.parentNode.offsetWidth;
-  var zLeft = mouseVars.targetStart.parentNode.offsetLeft;
+  var zLeft = mouseVars.targetStart.parentNode.offsetLeft + document.getElementById('cont').offsetLeft;
   var sliderLeft = mouseVars.xCurrent - zLeft + 2;
 
   sliderLeft -= (mouseVars.targetStart.offsetWidth / 2);
@@ -375,7 +388,7 @@ function volMove() {
       sliderPercent = 100;
   }
 
-  globVol = sliderPercent / 100;
+  globVol = (sliderPercent / 100);
 
   document.getElementById('vol%').innerHTML = Math.round(sliderPercent) + '%';
 
@@ -385,4 +398,15 @@ function volMove() {
   sliderPercent *= zDiff;
 
   mouseVars.targetStart.style.left = sliderPercent + '%';
+}
+function volUpdate() {
+  var sliderPercent = (globVol * 100);
+  document.getElementById('vol%').innerHTML = Math.round(sliderPercent) + '%';
+
+  //recalculate to offset width of the slider iteself
+  var zDiff = (document.getElementById('vol-Cv').offsetWidth - document.getElementById('vol-Iv').offsetWidth) / document.getElementById('vol-Cv').offsetWidth;
+
+  sliderPercent *= zDiff;
+
+  document.getElementById('vol-Iv').style.left = sliderPercent + '%';
 }

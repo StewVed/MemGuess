@@ -38,7 +38,6 @@ body {
 }
 
 #scoreInner {
-  /* position: relative; */
   width: 100%;
 }
 
@@ -128,7 +127,6 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   background: linear-gradient(#eee, #999);
-  /* float: left; */
   line-height: 100%;
   padding: 1% 0%;
   margin-left: 1%;
@@ -191,7 +189,6 @@ body {
 
 #settns {
   position: absolute;
-  text-align: center;
   top: 0;
   left: 0;
   height: 100%;
@@ -229,4 +226,34 @@ body {
   box-sizing: border-box;
   width: 14%;
   height: 250%;
+}
+
+#noty {
+  width: 90%;
+  left: 5%;
+  position: absolute;
+  border: 2px solid hsl(0, 0%, 0%);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 1%;
+  font-weight: bold;
+  background-color: antiquewhite;
+  opacity: 0;
+  transition: opacity .5s;
+}
+
+#notyClose {
+  position: absolute;
+  top: -12px;
+  left: calc(100% - 22px);
+  height: 26px;
+  width: 27px;
+  border: 2px solid hsl(0, 0%, 0%);
+  font-weight: bold;
+  padding: 1%;
+  line-height: 100%;0% */
+  font-size: 1.2em;
+  font-size: 1.7em;
+  border-radius: 640px;
+  margin: 0;
 }

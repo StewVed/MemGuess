@@ -1,29 +1,47 @@
 /*
-  A simple memory and guessing game by StewVed.
+  A 'simple' memory and guessing game by StewVed.
 */
-var nums = []
-  , globVol = .33 //the volume of the beeps in the game.
-  , randing = 0   //whether the game is generating and playing the new number sequence
-  , mem = 1       //memory or guessing mode
-  , buttons = 4   //how many buttons to use in the game - 4 by default
-  , level = 1     //starting/current level
-  , threshold = 4 //turns until the next level up/down
-  , turns = 0     //the total number of turns played this game
-  , combo = 0     //the current combo nunmber of the turn
-  , score = 0     //current score for this level
-  , t = 600 //for how long something takes to animate... pause time.
-  , playing = null ;
+var nums = [], globVol = .33 //the volume of the beeps in the game.
+, randing = 0 //whether the game is generating and playing the new number sequence
+, mem = 1 //memory or guessing mode
+, buttons = 4 //how many buttons to use in the game - 4 by default
+, level = 1 //starting/current level
+, threshold = 4 //turns until the next level up/down
+, turns = 0 //the total number of turns played this game
+, combo = 0 //the current combo nunmber of the turn
+, score = 0 //current score for this level
+, t = 600 //for how long something takes to animate... pause time.
+, playing //disregard any button clicks while the combo is playing.
+, saveY;
+//user's choice on whether to save data - volume and memory/guess choice, etc.
 function InitMain() {
-  //load inputs file
+
+  //could add customisazions like colors, sounds, shapes, amount of buttons, etc. as well.
   /*
     create the amount of circles that the user will play.
-    give user the choice between simon-says, and lets-guess.
+    give user the choice between simon-says, and let's-guess.
 
     have an array of random numbers pushed into it
-    array is populated before the user chooses, so it is fixed...
-    not ased on when the user clicks and other factors.
+    array is populated before the user chooses, so it is fixed.
 */
   document.body.innerHTML = '<div id="cont">' + '<div id="game">' + createButtons() + '</div>' + '<div id="score">' + createScore() + '</div>' + '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>' + '</div>' + '';
+    //check for saved data. If set, the user has chosed to either save or not save data.
+  storageCheck();
+  //check if the user has modified the volume level:
+  var dataToLoad = storageLoad('vol');
+  if (dataToLoad) {
+    globVol = parseFloat(dataToLoad);
+    //move the volume slider to the loaded volume
+    volUpdate();
+  }
+  //now check to see if the user has chosen memory or guessing mode:
+  dataToLoad = storageLoad('mem');
+  if (dataToLoad) {
+    mem = parseInt(dataToLoad);
+    if (!mem) {
+      swapButton('ges', 'mem');
+    }
+  }
   resize();
   newGame();
 }
@@ -104,12 +122,10 @@ function newGame() {
   randing = 1;
   randNums();
   //generate random array
-
   //check 
   if (level != nums.length) {
     var wtf = 'ffs';
   }
-
   if (mem) {
     playing = window.setTimeout(function() {
       playSequence(0);
@@ -129,7 +145,7 @@ function playSequence(x) {
   } else {
     playing = window.setTimeout(function() {
       randing = 0;
-    }, (t/2));
+    }, (t / 2));
   }
 }
 function updateScore() {
@@ -137,48 +153,29 @@ function updateScore() {
   document.getElementById('pt').innerHTML = 'Level: ' + level;
 }
 function updateProgress() {
-  var num = 0;
-  //new version is a div with the green and red divs inside it. This means I only have to 
-  //move that single div left or right
-  //the entire div is 300% the size of the level div
-  //middle is -100% = 0
-  //100% green is 0% to 100%
-  //100%  red  is -200% to -300%
-  //score is positive or negative, and 0 would equate to -100%
-  var t1 = score;
-  var t2 = threshold;
-  var t3 = t1 / t2;
-  var t4 = t3 * 100;
-  num = t4 - 100;
-  //right then, if threshold = 10, then -10 should be -200
-  document.getElementById('pa').style.left = num.toFixed(2) + '%';
+  document.getElementById('pa').style.left = (((score / threshold) * 100) - 100).toFixed(2) + '%';
 }
 function endTurn() {
   combo = 0;
   turns++;
-
   if (Win) {
-    score ++;
+    score++;
     window.setTimeout(function() {
       soundBeep('sine', 1000, 1, 100)
     }, 100);
-  }
-  else {
-    score --;
+  } else {
+    score--;
     window.setTimeout(function() {
       soundBeep('sine', 500, 1, 100)
     }, 100);
   }
-
   updateProgress();
-
   if (score >= threshold) {
     end1(1, '100%');
     window.setTimeout(function() {
       soundBeep('sine', 1500, 1, 100)
     }, 200);
-  }
-  else if (score <= -threshold) {
+  } else if (score <= -threshold) {
     end1(-1, '-300%');
     window.setTimeout(function() {
       soundBeep('sine', 330, 1, 100);
@@ -224,12 +221,13 @@ function swapButton(zEnable, zDisable) {
   document.getElementById(zDisable).classList.remove('uButtonGreen');
   document.getElementById(zDisable).classList.add('uButtonGrey');
   window.clearTimeout(playing);
-  playing = null;
+  playing = null ;
   turns = 0;
   level = 1;
   score = 0;
   updateScore();
   updateProgress();
+  storageSave('mem', mem);
 }
 // fullscreen handling from webtop then simplified for this project...
 function fullScreenToggle() {
@@ -260,7 +258,8 @@ function toggleSettings() {
 function soundBeep(type, frequency, volume, duration) {
   //make the volume comform to the globally set volume
   volume *= globVol;
-  volume*= .5; //make the entire game queiter.
+  volume *= .5;
+  //make the entire game queiter.
   //create a HTML5 audio occilator thingy
   var zOscillator = WinAudioCtx.createOscillator();
   //create a HTML5 audio volume thingy

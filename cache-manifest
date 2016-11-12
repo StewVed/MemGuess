@@ -1,8 +1,10 @@
 CACHE MANIFEST
+#2016-11-12
 index.html
 main.css
+loader.js
 initialize.js
 inputs.js
+storage.js
 main.js
-loader.js
 favicon.png

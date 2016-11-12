@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html manifest="cache-manifest">
-<head>
-  <title>Memory & Guessing Game</title>
-  <link href="favicon.png" rel=icon>
-  <link href="main.css" rel="stylesheet" type="text/css"/>
-  <meta content="Memory and guessing game by Stewart Robinson (StewVed)" name=description>
-  <meta content="StewVed,stewart,robinson,webapp,free,program,app,game,html5,javascript" name=keywords>
-  <meta content="Stewart Robinson (StewVed)" name=author>
-  <meta charset=UTF-8>
-  <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" name=viewport>
-</head>
-<body>
-  <div id="game">
-    <div id="loading" style="position:relative;"></div>
-  </div>
-  <div id="score"></div>
-  <script>
-    var a = document.createElement('script')
-    a.src = 'loader.js';
-    document.head.appendChild(a);
-  </script>
-</body>
+  <head>
+    <title>Memory & Guessing Game</title>
+    <link rel=icon href="favicon.png">
+    <link rel="stylesheet" href="main.css">
+    <link rel="manifest" href="app-manifest">
+    <meta lang="en">
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Memory and guessing game by StewVed">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="keywords" content="StewVed,stewart,robinson,webapp,free,program,app,game,html5,javascript">
+    <meta name="author" content="Stewart Robinson (StewVed)">
+  </head>
+  <body>
+    <div id="game">
+      <div id="loading" style="position:relative;"></div>
+    </div>
+    <div id="score"></div>
+    <script>
+      var a = document.createElement('script')
+      a.src = 'loader.js';
+      document.head.appendChild(a);
+    </script>
+  </body>
+</html>

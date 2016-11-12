@@ -1,0 +1,15 @@
+{
+  "lang": "en",
+  "short_name": "MemGuess",
+  "name": "Memory & Guessing game by StewVed",
+  "description": "A simple memory and guessing game by StewVed",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+}
