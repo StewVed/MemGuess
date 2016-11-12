@@ -286,6 +286,7 @@ function mouseClick(){
   }
   else if (targ.id.slice(0,4) === 'stor'){ //Storage Notify Yes button
     storageChoose(targ.id.slice(-1))
+    document.getElementById('noty').parentNode.removeChild(document.getElementById('noty'));
   }
 
 }
