@@ -4,12 +4,17 @@
   "description": "A simple memory and guessing webapp.",
   "lang": "en",
   "scope": "/",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "fullscreen",
   "theme_color": "antiquewhite",
   "background_color": "antiquewhite",
   "icons": [{
-    "src": "/favicon.svg",
-    "sizes": "any"
-  }]
+    "src": "favicon.svg",
+    "sizes": "256x256"
+  }, {
+    "src": "favicon.png",
+    "sizes": "64x64",
+    "type": "image/png"
+  }
+  ]
 }
