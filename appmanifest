@@ -9,8 +9,7 @@
   "theme_color": "antiquewhite",
   "background_color": "antiquewhite",
   "icons": [{
-    "src": "favicon.svg",
-    "sizes": "any"
+    "src": "favicon.svg"
   }, {
     "src": "favicon.png",
     "sizes": "64x64",
