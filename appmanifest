@@ -10,6 +10,6 @@
   "background_color": "antiquewhite",
   "icons": [{
     "src": "/favicon.svg",
-    "sizes": "any",
+    "sizes": "any"
   }]
 }
