@@ -30,6 +30,11 @@ var loadType = 1; //simple shows the files in debugger, progress obfuscates them
 
 var loadingVars = [];
 
+
+//add service worker registration to the app:
+addServiceWorker();
+
+
 /*
  * set the loadType here:
  * 0 = simple and easy
@@ -37,8 +42,6 @@ var loadingVars = [];
  * 2 = (experimental) sizeOf File compared to element.innerHTML.length (poll every animationFrame perhaps?)
  * for now, lets just poll every 50ms - I imagine that will be fast enough - dropped - wont work
 */
-loadType = 0;
-
 
 if (loadType){
   loaderProgress();
@@ -129,17 +132,19 @@ function fLoad(zSrc, zType, zId, zText, zLoad, WinNo) {
 
 
 function fLoadProgressBar(zFileName, zText) {
-  //create new element for the progressbar of this loader
-  var pBar =
-    '<div id="' + zFileName + 'C" style="width:50%;position:relative;margin:2px auto;border-radius: 24px;border:2px solid hsl(0, 0%, 50%);text-align:left;">' +
-      '<div id="' + zFileName + 'Pi" style="position:relative;border-radius:inherit;height:24px;width:0%;background:linear-gradient(hsl(120, 100%, 80%), hsl(120, 100%, 30%));"></div>' +
-      '<div id="' + zFileName + 'Pc" style="border-radius:inherit;position:absolute;width:100%;text-align:center;color:hsl(0, 0%, 50%);font-weight:bold;font-size:125%;line-height:24px;top:0px;">' + zText + ' (Calculating...)</div>' +
-    '</div>';
+  if (document.getElementById('loading')) {
+    //create new element for the progressbar of this loader
+    var pBar =
+      '<div id="' + zFileName + 'C" style="width:50%;position:relative;margin:2px auto;border-radius: 24px;border:2px solid hsl(0, 0%, 50%);text-align:left;">' +
+        '<div id="' + zFileName + 'Pi" style="position:relative;border-radius:inherit;height:24px;width:0%;background:linear-gradient(hsl(120, 100%, 80%), hsl(120, 100%, 30%));"></div>' +
+        '<div id="' + zFileName + 'Pc" style="border-radius:inherit;position:absolute;width:100%;text-align:center;color:hsl(0, 0%, 50%);font-weight:bold;font-size:125%;line-height:24px;top:0px;">' + zText + ' (Calculating...)</div>' +
+      '</div>';
 
-  //add the progreassBar to the game
-  document.getElementById('loading').innerHTML += pBar;
+    //add the progreassBar to the game
+    document.getElementById('loading').innerHTML += pBar;
 
-  loaderReHeight();
+    loaderReHeight();
+  }
 }
 
 
@@ -232,16 +237,6 @@ function loaderReHeight() {
 
 function loaderSimple() {
   var firstScript = document.getElementsByTagName('script')[0];
-/*
-  gameSprite = new Image();
-  gameSprite.id = 'gameSpritel';
-  gameSprite.src = 'spriteImg.png';
-  gameSprite.addEventListener('load',function(){
-    this.id = this.id.slice(0,-1);
-    filesLoadedCheck();
-  });
-  firstScript.parentNode.insertBefore(gameSprite, firstScript);
-*/
 
   for (var fileName of fileList){
     var zScript = document.createElement('script');
@@ -256,10 +251,23 @@ function loaderSimple() {
   }
 }
 
-
-/*
-
-window['lIR'] = function() {
-  document.getElementById('spritePre').id = 'gameSprite';
-}
+/*serviceworker (mostly) learned from:
+https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
+https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
 */
+function addServiceWorker() {
+  if ('serviceWorker'in navigator) {
+    //should the user be prompted whether they'd like this made available offline?
+    navigator.serviceWorker.register('sw.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      /*
+        let the user know that this is available offline,
+        and offer to 'install' (add to home page) maybe.
+      */
+    }).catch(function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  }
+}

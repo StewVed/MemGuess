@@ -44,8 +44,7 @@ var WinAudioCtx = new (window.AudioContext || window.webkitAudioContext);
  * but because I am using a loader which tracks the loading of the images and sounds, Init is called by that.
 */
 function Init() {
-  //add service worker registration to the app:
-  addServiceWorker();
+
   // Add event listeners to the game elenemt
   addEventListeners();
   // initialize the mouse event
@@ -66,21 +65,6 @@ function Init() {
   InitMain();
 }
 
-/*serviceworker (mostly) learned from:
-https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
-https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
-*/
-function addServiceWorker() {
-  if ('serviceWorker'in navigator) {
-    navigator.serviceWorker.register('sw.js').then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }).catch(function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  }
-}
 function addEventListeners() {
   //window.addEventListener('error', Win_errorHandler, false); //now done from the main index.html file
   window.addEventListener('resize', resize, false);
