@@ -38,7 +38,8 @@ how about
 
 or are they implicitly added?
 OK sw.js returned an Uncaught (in promise) TypeError so I will assume it doesn't have to be cached manually
-
+hmm looks like a chrome extension is getting in the way!
+chrome-extension:
 */
 var urlsToCache = [
     'index.html'
@@ -134,10 +135,33 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(caches.open(CACHE_NAME).then(function(cache) {
     return cache.match(event.request).then(function(response) {
       var fetchPromise = fetch(event.request).then(function(networkResponse) {
-        cache.put(event.request, networkResponse.clone());
-        return networkResponse;
+        // Check if we received a valid response
+        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        }
       })
       return response || fetchPromise;
     })
+  }));
+});
+self.addEventListener('fetch', function(event) {
+  event.respondWith(caches.match(event.request).then(function(response) {
+    // Cache hit - return response
+    if (response) {
+      return response;
+    }
+    var fetchRequest = event.request.clone();
+    return fetch(fetchRequest).then(function(response) {
+      // Check if we received a valid response
+      if (!response || response.status !== 200 || response.type !== 'basic') {
+        return response;
+      }
+      var responseToCache = response.clone();
+      caches.open(CACHE_NAME).then(function(cache) {
+        cache.put(event.request, responseToCache);
+      });
+      return response;
+    });
   }));
 });
