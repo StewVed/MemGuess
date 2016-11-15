@@ -26,7 +26,7 @@
 var fileList = ['initialize', 'inputs', 'storage', 'main'];
 //var fileList = ['game'];
 
-var loadType = 0; //simple shows the files in debugger, progress obfuscates them, but can be shown in various ways.
+var loadType = 1; //simple shows the files in debugger, progress obfuscates them, but can be shown in various ways.
 
 var loadingVars = [];
 
