@@ -57,6 +57,7 @@ self.addEventListener('install', function(event) {
   If the app uses AJAX to get all of the neccessary files, 
   Would we need to specify the list of files to cache?!?
 
+*/
 self.addEventListener('fetch', function(event) {
   event.respondWith(caches.match(event.request).then(function(response) {
     // Cache hit - return response
@@ -86,7 +87,6 @@ self.addEventListener('fetch', function(event) {
     });
   }));
 });
-*/
 /*
   This last bit is for updating the service/app.
   I will assume that the SW is always upgraded,
@@ -115,22 +115,19 @@ self.addEventListener('activate', function(event) {
   have any choice in when an update happens (if online).
 */
 //Stale-while-revalidate - If there's a cached version available, use it, but fetch an update for next time.
+/*
 self.addEventListener('fetch', function(event) {
   event.respondWith(caches.open(CACHE_NAME).then(function(cache) {
     return cache.match(event.request).then(function(response) {
       var fetchPromise = fetch(event.request).then(function(networkResponse) {
-        // Check if we received a valid response
-        try {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        } catch (err) {
-          /*likely a browser extension*/
-        }
+        cache.put(event.request, networkResponse.clone());
+        return networkResponse;
       })
       return response || fetchPromise;
     })
   }));
 });
+*/
 /*
 self.addEventListener('fetch', function(event) {
   event.respondWith(caches.match(event.request).then(function(response) {
@@ -152,4 +149,5 @@ self.addEventListener('fetch', function(event) {
     });
   }));
 });
+
 */
