@@ -9,7 +9,7 @@
   https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
 */
 //I will default to using the date in the name instead of versioning.
-var CACHE_NAME = 'MemGuess-2016-11-15-1';
+var CACHE_NAME = 'MemGuess-2016-11-15-2';
 //for more than one cache list, use an array:
 //var cacheList = ['pages-cache-v1', 'blog-posts-cache-v1'];
 /*
@@ -37,12 +37,12 @@ how about
   , 
 
 or are they implicitly added?
+OK sw.js returned an Uncaught (in promise) TypeError so I will assume it doesn't have to be cached manually
 
 */
 var urlsToCache = [
     'index.html'
   , 'appmanifest'
-  , 'sw.js'
   , 'main.css'
   , 'loader.js'
   , 'initialize.js'

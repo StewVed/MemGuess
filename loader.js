@@ -230,7 +230,7 @@ function filesLoadedCheck() {
 
 function loaderReHeight() {
   document.getElementById('loading').style.top = (
-    (document.getElementById('gameContainer').offsetHeight / 2) -
+    (document.getElementById('loading').parentNode.offsetHeight / 2) -
     (document.getElementById('loading').offsetHeight / 2)
   ) + 'px';
 }
