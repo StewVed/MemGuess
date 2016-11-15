@@ -41,19 +41,7 @@ OK sw.js returned an Uncaught (in promise) TypeError so I will assume it doesn't
 hmm looks like a chrome extension is getting in the way!
 chrome-extension:
 */
-var urlsToCache = [
-    'index.html'
-  , 'appmanifest'
-  , 'main.css'
-  , 'loader.js'
-  , 'initialize.js'
-  , 'inputs.js'
-  , 'storage.js'
-  , 'main.js'
-  , 'favicon.png'
-  , 'favicon.svg'
-  , 'favicon256.png'
-];
+var urlsToCache = ['index.html', 'appmanifest', 'main.css', 'loader.js', 'initialize.js', 'inputs.js', 'storage.js', 'main.js', 'favicon.png', 'favicon.svg', 'favicon256.png'];
 self.addEventListener('install', function(event) {
   event.waitUntil(caches.open(CACHE_NAME).then(function(cache) {
     console.log('Opened cache');
@@ -99,7 +87,6 @@ self.addEventListener('fetch', function(event) {
   }));
 });
 */
-
 /*
   This last bit is for updating the service/app.
   I will assume that the SW is always upgraded,
@@ -107,7 +94,6 @@ self.addEventListener('fetch', function(event) {
   somehow check for newer files of the ones that are
   cached?!?
 */
-
 //hopefully I have understood the activate axample, and modified it correctly for a single cache name:
 self.addEventListener('activate', function(event) {
   event.waitUntil(caches.keys().then(function(cacheNames) {
@@ -118,8 +104,6 @@ self.addEventListener('activate', function(event) {
     }));
   }));
 });
-
-
 /*
   from https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/
   This seems VERY useful for my app/game thing, because I might only update a few characters
@@ -136,15 +120,18 @@ self.addEventListener('fetch', function(event) {
     return cache.match(event.request).then(function(response) {
       var fetchPromise = fetch(event.request).then(function(networkResponse) {
         // Check if we received a valid response
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        try {
           cache.put(event.request, networkResponse.clone());
           return networkResponse;
+        } catch (err) {
+          /*likely a browser extension*/
         }
       })
       return response || fetchPromise;
     })
   }));
 });
+/*
 self.addEventListener('fetch', function(event) {
   event.respondWith(caches.match(event.request).then(function(response) {
     // Cache hit - return response
@@ -165,3 +152,4 @@ self.addEventListener('fetch', function(event) {
     });
   }));
 });
+*/
