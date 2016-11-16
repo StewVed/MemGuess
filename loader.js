@@ -24,12 +24,13 @@
 */
 var fileList = ['initialize', 'inputs', 'storage', 'main'];
 //just have one file loading.
-fileList = ['main'];
+//fileList = ['main'];
+
 var loadType = 1;
 //simple shows the files in debugger, progress obfuscates them, but can be shown in various ways.
 var loadingVars = [];
 //add service worker registration to the app:
-//addServiceWorker();
+addServiceWorker();
 /*
  * set the loadType here:
  * 0 = simple and easy
@@ -62,7 +63,6 @@ function fLoad(zSrc, zType, zId, zText, zLoad, WinNo) {
   }
   //create an onLoad event for when the server has sent the data through to the browser
   xhr.addEventListener('loadend', function() {
-    ///was load
     //Create an empty element of the type required (link=css, script=javascript, img=image)
     var zElem = document.createElement(zType);
     //if there is an ID for this script, add it to the new element
@@ -76,18 +76,8 @@ function fLoad(zSrc, zType, zId, zText, zLoad, WinNo) {
       //add the downloaded src to the element
     } else {
       zElem.innerHTML = xhr.responseText;
-      //add the downloaded stuff to the eleme
-      //zElem.src = zSrc; //hopefully to get it to show in chrome debugger
     }
     document.head.appendChild(zElem);
-    //append the element to the webpage
-    /*
-    //call any onload functions that the element requires
-    if (zLoad) {
-      window[zLoad](WinNo);
-    }
-*/
-    //filesLoadedCheck();
   }, false);
   xhr.addEventListener('error', function() {
     alert('somert went wrong!');
@@ -126,7 +116,12 @@ function fLoadProgressBar(zFileName, zText) {
 }
 function fileProgress(e, zFileName) {
   if (document.getElementById(zFileName + 'Pi')) {
-    if (1 == 2 && e.lengthComputable) {
+    if (e.lengthComputable) {
+      if (loadingVars[zFileName].sizeUnknown) {
+        loadingVars[zFileName].sizeUnknown = 0;
+        window.clearInterval(loadingVars[zFileName].endCheckTimer);
+        loadingVars[zFileName].endCheckTimer = null;
+      }
       document.getElementById(zFileName + 'Pi').classList.remove('loadVV');
       //calculate the amount of time that has passed since last update:
       var timeNow = performance.now();
@@ -145,13 +140,18 @@ function fileProgress(e, zFileName) {
       var pCent = (e.loaded / e.total) * 100;
       document.getElementById(zFileName + 'Pi').style.width = pCent + '%';
       document.getElementById(zFileName + 'Pc').innerHTML = loadingVars[zFileName].text + ' (' + pCent.toFixed(1) + '%)';
+
     } else {
       /*
         this appears to happen on github, which is reallllly annoying, but let's hack through it :D
         v1 - non-hack; move the inner progress back and forth in knight-rider/cylon/linux style...
         heh thinking about it.. maybe I should make it glowing... but still green!
       */
-      //try pure css animation for the job:
+      //try pure css animation for the job:  
+      if (!loadingVars[zFileName].sizeUnknown) {
+        loadingVars[zFileName].sizeUnknown = 1;
+        loadingVars[zFileName].endCheckTimer = window.setInterval(function(){filesLoadedCheck()}, 500);
+      }
       document.getElementById(zFileName + 'Pi').classList.add('loadVV');
     }
   }
@@ -220,7 +220,7 @@ function filesLoadedCheck() {
   }
 }
 function loaderReHeight() {
-  document.getElementById('loading').style.top = ((document.body.offsetHeight - document.getElementById('loading').offsetHeight) / 2) + 'px';
+  document.getElementById('loading').style.top = ((window.innerHeight - document.getElementById('loading').offsetHeight) / 2) + 'px';
 }
 function loaderSimple() {
   var firstScript = document.getElementsByTagName('script')[0];
