@@ -44,7 +44,6 @@ var WinAudioCtx = new (window.AudioContext || window.webkitAudioContext);
  * but because I am using a loader which tracks the loading of the images and sounds, Init is called by that.
 */
 function Init() {
-
   // Add event listeners to the game elenemt
   addEventListeners();
   // initialize the mouse event
@@ -64,7 +63,6 @@ function Init() {
   */
   InitMain();
 }
-
 function addEventListeners() {
   //window.addEventListener('error', Win_errorHandler, false); //now done from the main index.html file
   window.addEventListener('resize', resize, false);

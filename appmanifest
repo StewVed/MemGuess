@@ -1,7 +1,7 @@
 {
   "name": "Memory & Guessing Game",
   "short_name": "MemGuess",
-  "description": "A simple memory and guessing webapp.",
+  "description": "A simple memory and guessing webgame by StewVed",
   "lang": "en",
   "scope": "/",
   "start_url": "index.html",

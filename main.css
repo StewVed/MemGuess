@@ -289,9 +289,9 @@ body {
 .loadVV {
   position: relative;
   float: none;
-  animation: Vom .66s ease-in-out alternate infinite;
+  animation: Vom .5s ease-in-out alternate infinite;
   width: 25%;
-  background: radial-gradient(farthest-side at 50% 50% , hsla(123 50% 50% .2), hsla(123 50% 50% 1) 50%);
+  background: radial-gradient(farthest-side at 50% 50%, hsl(0, 100%, 50%), hsla(0, 100%, 50%, 0));
 }
 
 @keyframes Vom {

@@ -3,56 +3,34 @@
  * to give the user a progressbar for each file that is being loaded.
  * it is not smooth, but at the moment, this is the only way I've
  * found to show progress.
- *
- * I hope to develop a new/better way of loading files in the future,
- *
- * hmm how about getting the size of the file, then comparing it
- * against the length of the element.innerHTML of the element
- * that the file is being sownloaded to?
- *
- * annoyingly, it seems that the data is downlaoded by large chunks
- * and not linierly. I suppose that is determined by the network MTU?
- * anyway, because of this, the ONLY way to create a smooth progressbar
- * is the way I am already doing it; move the progressbar blindly forward
- * a little bit per animationFrame/50ms or so.
- *
- * So, I will make it smoother by adding a downlaod speed estimater :D
- * experimental loader dropped until/unless something new turns up like HTML5 file from server
- *
- * anyway, for simplicity and wase of bug hunting, I'll also have
- * simple adding code.
 */
 var fileList = ['initialize', 'inputs', 'storage', 'main'];
-//just have one file loading.
-//fileList = ['main'];
-
-var loadType = 1;
-//simple shows the files in debugger, progress obfuscates them, but can be shown in various ways.
+var isLoaded = 0;
 var loadingVars = [];
 //add service worker registration to the app:
 addServiceWorker();
-/*
- * set the loadType here:
- * 0 = simple and easy
- * 1 = Webtop: Server-xmlHTTPRequest
- * 2 = (experimental) sizeOf File compared to element.innerHTML.length (poll every animationFrame perhaps?)
- * for now, lets just poll every 50ms - I imagine that will be fast enough - dropped - wont work
-*/
-if (loadType) {
-  loaderProgress();
-} else {
-  loaderSimple();
-}
-function loaderProgress() {
-  //fLoad('spriteImg.png', 'img', 'spriteImg', 'Images', '', 0); //fileVer
-  for (var fileName of fileList) {
-    fLoad(fileName + '.js', 'script', fileName, fileName + ' file', '', 0);
-  }
+//loop through the required files, and load then now.
+for (var fileName of fileList) {
+  fLoad(fileName + '.js', 'script', fileName, fileName + ' file', '', 0);
 }
 function fLoad(zSrc, zType, zId, zText, zLoad, WinNo) {
   //remove the dot and any slashes in the name, so that it can be used for the name of the progressbar
   var zFileName = zSrc.replace(/\./, '').replace(/\//, '');
   fLoadProgressBar(zFileName, zText);
+  //create a new global variable with the name of the file so that the progress bar moves a little bit even with no response from the server
+  loadingVars[zFileName] = [];
+  //create an object to keep the time and amount downloaded for dl speed:
+  loadingVars[zFileName].text = zText;
+  loadingVars[zFileName].time = performance.now();
+  //high resolution version of date.now()
+  loadingVars[zFileName].tick = performance.now();
+  loadingVars[zFileName].size = 0;
+  //the amount of data currently downlaoded.
+  loadingVars[zFileName].speed = 2;
+  //bytes per second (I think)
+  loadingVars[zFileName].total = 0;
+  loadingVars[zFileName].xhr = 1;
+  //the total amount to be downloaded.
   //Create a new request to the server
   var xhr = new XMLHttpRequest();
   xhr.open('GET', zSrc, true);
@@ -63,47 +41,49 @@ function fLoad(zSrc, zType, zId, zText, zLoad, WinNo) {
   }
   //create an onLoad event for when the server has sent the data through to the browser
   xhr.addEventListener('loadend', function() {
-    //Create an empty element of the type required (link=css, script=javascript, img=image)
-    var zElem = document.createElement(zType);
-    //if there is an ID for this script, add it to the new element
-    if (zId) {
-      zElem.id = zId;
+    if (loadingVars[zFileName].xhr) {
+      //Create an empty element of the type required (link=css, script=javascript, img=image)
+      var zElem = document.createElement(zType);
+      //if there is an ID for this script, add it to the new element
+      if (zId) {
+        zElem.id = zId;
+      }
+      if (zType === 'img') {
+        window.URL.revokeObjectURL(zElem.src);
+        //make sure there is no src
+        zElem.src = window.URL.createObjectURL(xhr.response);
+        //add the downloaded src to the element
+      } else {
+        zElem.innerHTML = xhr.responseText;
+      }
+      document.head.appendChild(zElem);
     }
-    if (zType === 'img') {
-      window.URL.revokeObjectURL(zElem.src);
-      //make sure there is no src
-      zElem.src = window.URL.createObjectURL(xhr.response);
-      //add the downloaded src to the element
-    } else {
-      zElem.innerHTML = xhr.responseText;
-    }
-    document.head.appendChild(zElem);
   }, false);
   xhr.addEventListener('error', function() {
-    alert('somert went wrong!');
+    //will happen with files during local development
+    loadingVars[zFileName].xhr = 0;
+    fLoadSimple(zSrc.split('.')[0]);
   }, false);
   xhr.addEventListener('progress', function(e) {
     fileProgress(e, zFileName)
   }, false);
   xhr.send();
-  //create a new global variable with the name of the file so that the progress bar moves a little bit even with no response from the server
-  //window[zFileName + 'Timer'] = window.setInterval(function() {fileProgresser(zFileName)}, 100);
-  //create an object to keep the time and amount downloaded for dl speed:
-  loadingVars[zFileName] = [];
-  loadingVars[zFileName].text = zText;
-  loadingVars[zFileName].time = performance.now();
-  //high resolution version of date.now()
-  loadingVars[zFileName].tick = performance.now();
   //high resolution version of date.now()
   loadingVars[zFileName].frame = window.requestAnimationFrame(function() {
     fileProgresser(zFileName)
   });
-  loadingVars[zFileName].size = 0;
-  //the amount of data currently downlaoded.
-  loadingVars[zFileName].speed = 2;
-  //bytes per second (I think)
-  loadingVars[zFileName].total = 0;
-  //the total amount to be downloaded.
+}
+function fLoadSimple(fileName) {
+  var firstScript = document.getElementsByTagName('script')[0];
+  var zScript = document.createElement('script');
+  //zScript.type = 'text/javascript'; //needed in modern browsers?!Q?
+  zScript.id = fileName + 'l';
+  zScript.src = fileName + '.js';
+  zScript.addEventListener('load', function() {
+    this.id = this.id.slice(0, -1);
+    filesLoadedCheck();
+  });
+  firstScript.parentNode.insertBefore(zScript, firstScript);
 }
 function fLoadProgressBar(zFileName, zText) {
   if (document.getElementById('loading')) {
@@ -120,7 +100,7 @@ function fileProgress(e, zFileName) {
       if (loadingVars[zFileName].sizeUnknown) {
         loadingVars[zFileName].sizeUnknown = 0;
         window.clearInterval(loadingVars[zFileName].endCheckTimer);
-        loadingVars[zFileName].endCheckTimer = null;
+        loadingVars[zFileName].endCheckTimer = null ;
       }
       document.getElementById(zFileName + 'Pi').classList.remove('loadVV');
       //calculate the amount of time that has passed since last update:
@@ -140,7 +120,6 @@ function fileProgress(e, zFileName) {
       var pCent = (e.loaded / e.total) * 100;
       document.getElementById(zFileName + 'Pi').style.width = pCent + '%';
       document.getElementById(zFileName + 'Pc').innerHTML = loadingVars[zFileName].text + ' (' + pCent.toFixed(1) + '%)';
-
     } else {
       /*
         this appears to happen on github, which is reallllly annoying, but let's hack through it :D
@@ -150,7 +129,9 @@ function fileProgress(e, zFileName) {
       //try pure css animation for the job:  
       if (!loadingVars[zFileName].sizeUnknown) {
         loadingVars[zFileName].sizeUnknown = 1;
-        loadingVars[zFileName].endCheckTimer = window.setInterval(function(){filesLoadedCheck()}, 500);
+        loadingVars[zFileName].endCheckTimer = window.setInterval(function() {
+          filesLoadedCheck()
+        }, 500);
       }
       document.getElementById(zFileName + 'Pi').classList.add('loadVV');
     }
@@ -158,7 +139,7 @@ function fileProgress(e, zFileName) {
 }
 function fileProgresser(zFileName) {
   if (document.getElementById(zFileName + 'Pi')) {
-    var zNum = parseFloat(document.getElementById(zFileName + 'Pi').style.width || 0) ;
+    var zNum = parseFloat(document.getElementById(zFileName + 'Pi').style.width || 0);
     if (zNum < 100) {
       if (loadingVars[zFileName].total) {
         /*
@@ -205,15 +186,14 @@ function filesLoadedCheck() {
     //check for the scripts:
     for (var fileName of fileList) {
       if (!document.getElementById(fileName)) {
+        //Not all scripts have finished (down)loading, so do not start yet.
         return;
-        //a script has not yet, so don't start up yet.
       }
     }
     //getting this far means everything is loaded. continue...
     //make sure to only run this once :D
-    if (loadType != -1) {
-      loadType = -1;
-      //loadType will only ever be -1 when set here... and will only happen once :D
+    if (!isLoaded) {
+      isLoaded = 1;
       document.getElementById('loading').parentNode.removeChild(document.getElementById('loading'));
       Init();
     }
@@ -221,20 +201,6 @@ function filesLoadedCheck() {
 }
 function loaderReHeight() {
   document.getElementById('loading').style.top = ((window.innerHeight - document.getElementById('loading').offsetHeight) / 2) + 'px';
-}
-function loaderSimple() {
-  var firstScript = document.getElementsByTagName('script')[0];
-  for (var fileName of fileList) {
-    var zScript = document.createElement('script');
-    zScript.type = 'text/javascript';
-    zScript.id = fileName + 'l';
-    zScript.src = fileName + '.js';
-    zScript.addEventListener('load', function() {
-      this.id = this.id.slice(0, -1);
-      filesLoadedCheck();
-    });
-    firstScript.parentNode.insertBefore(zScript, firstScript);
-  }
 }
 /*serviceworker (mostly) learned from:
 https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
