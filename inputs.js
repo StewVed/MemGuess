@@ -32,29 +32,64 @@ function findTarget(e) {
   return targ;
 }
 function gamePadUpdate() {
-  //overwrite with the current gamepad statuses
   var gamePads = navigator.getGamepads();
-  //Chrom[e/ium] appears to have a bug where it reports 4 undefined gamepads instead of nothing! woraround here:
   for (var x = 0; x < gamePads.length; x++) {
     if (gamePads[x]) {
       //only add if the gamepad exists - NOT FOOLPROOF!
-      //only shallow-copy the buttons and axes - don't need the rest (yet!)
+      //initialize/clear the gamePadVar
       gamePadVars[x] = [];
+      //only shallow-copy the buttons and axes - don't need the rest (yet!)
       gamePadVars[x].buttons = gamePads[x].buttons.slice(0);
       gamePadVars[x].axes = gamePads[x].axes.slice(0);
     }
   }
-  /*
-interface Gamepad {
-  readonly  attribute DOMString           id;
-  readonly  attribute long                index;
-  readonly  attribute boolean             connected;
-  readonly  attribute DOMHighResTimeStamp timestamp;
-  readonly  attribute GamepadMappingType  mapping;
-  readonly  attribute double[]            axes;
-  readonly  attribute GamepadButton[]     buttons;
-};
-*/
+}
+function gamePadsButtonEventCheck() {
+  //only worry about gamePadVar[0] for this version
+  var oldButtons = []
+  if (gamePadVars[0]) {
+    //shallow-copy cos it is an (object) array:
+    for (var x = 0; x < gamePadVars[0].buttons.length; x++) {
+      oldButtons[x] = gamePadVars[0].buttons[x].pressed;
+    }
+  }
+
+  gamePadUpdate();
+  
+  //if there is at least 1 gamepad being used:
+  if (gamePadVars[0]) {
+    //if there has been any change to the buttons:
+    if (oldButtons.length === gamePadVars[0].buttons.length) {
+      //cycle through the newButtons, comparing them to the oldButtons
+      for (var x = 0; x < gamePadVars[0].buttons.length; x++) {
+        if (oldButtons[x] !== gamePadVars[0].buttons[x].pressed) {
+          if (gamePadVars[0].buttons[x].pressed) {
+            gamePadsButtonDown(x);
+          }
+          else {
+            gamePadsButtonUp(x);
+          }
+        }
+      }
+    }
+  }
+
+  //because there are no events for a gamepad, I must check for them myself...
+  //use animationFrame:
+  window.requestAnimationFrame(function() {
+    gamePadsButtonEventCheck();
+  });
+  
+}
+function gamePadsButtonDown(zButton) {
+  var stopHere = 'blah';
+  //I think it'd be nice to have the button lighten here, and play the first beep here...
+}
+function gamePadsButtonUp(zButton) {
+  var stopHere = 'blah';
+  //then the right/wrong beep here, with the button's color going back as well.
+  //and now this would be the same as mouseClick...
+  endUp(gamepadReMap[zButton]);
 }
 function keyNum(e) {}
 function keyDown(e) {
@@ -203,23 +238,7 @@ function mouseClick() {
   var targ = mouseVars.targetStart;
   if (!randing && isFinite(parseInt(targ.id))) {
     //is a button
-    //turn the correct button green:
-    ButtonBackColor(nums[combo], 'hsla(127,66%,50%, 1)');
-    if (targ.id != nums[combo]) {
-      //if the pressed button is not the correct button:
-      //turn the presssed button red:
-      ButtonBackColor(targ.id, 'hsla(0,100%,50%, .3)');
-      //user win = false!
-      Win = 0;
-      //you only lose if you get one wrong
-      //end the round now regardless of how many more clicks are left in this level.
-      combo = (level - 1);
-    }
-    combo++;
-    if (combo >= level) {
-      endTurn();
-    }
-    soundBeep('sine', 750, 1, 100);
+    endUp(targ.id);
   } else if (targ.id === 'mem') {
     //User pressed the 'Memory' button
     mem = 1;
@@ -234,10 +253,10 @@ function mouseClick() {
   } else if (targ.id === 'set') {
     //settings button
     toggleSettings();
-  } else if (targ.id === 'notyClose') {
-    //Notify popup close button
-    //close the notifier
-    document.getElementById('noty').parentNode.removeChild(document.getElementById('noty'));
+  } else if (targ.id.slice(-5) === 'Close') {
+    //popup close button
+    //close the popup
+    targ.parentNode.parentNode.removeChild(targ.parentNode);
   } else if (targ.id.slice(0, 4) === 'stor') {
     //Storage Notify Yes button
     storageChoose(targ.id.slice(-1));

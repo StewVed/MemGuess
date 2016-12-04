@@ -30,6 +30,7 @@ var inputType;
 var mouseVars = [];
 //Gamepad:
 var gamePadVars = [];
+var gamepadReMap = [2,3,0,1];
 //keyboard:
 var keyVars = [];
 //For touch-enabled devices
@@ -62,6 +63,8 @@ function Init() {
    * soundPlay(gameVars.sound1, 0); //0 is the startTime of the sound.
   */
   InitMain();
+  //now that everything is set up, make a recurring checker for button presses:
+  gamePadsButtonEventCheck();
 }
 function addEventListeners() {
   //window.addEventListener('error', Win_errorHandler, false); //now done from the main index.html file

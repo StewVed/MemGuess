@@ -11,7 +11,8 @@ body {
 .ting {
   transition: .2s;
   border: black solid;
-  font-size: 175%;
+  font-size: .5em;
+  font-weight: bold;
   border-radius: 640px;
   display: inline-block;
   cursor: default;

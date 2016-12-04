@@ -12,7 +12,19 @@ var nums = [], globVol = .33 //the volume of the beeps in the game.
 , score = 0 //current score for this level
 , t = 600 //for how long something takes to animate... pause time.
 , playing //disregard any button clicks while the combo is playing.
-, saveY;
+, saveY
+, clrs = ['blue', 'yellow', 'green', 'red']
+, hsls = [
+   'hsl(220, 100%, 50%)'
+ , 'hsl(60, 100%, 48%)'
+ , 'hsl(120, 100%, 45%)'
+ , 'hsl(0, 100%, 50%)']
+ , hslLs = [
+   'hsl(220, 100%, 80%)'
+ , 'hsl(60, 100%, 80%)'
+ , 'hsl(120, 100%, 75%)'
+ , 'hsl(0, 100%, 80%)']
+ ;
 //user's choice on whether to save data - volume and memory/guess choice, etc.
 function InitMain() {
   //could add customisazions like colors, sounds, shapes, amount of buttons, etc. as well.
@@ -49,7 +61,7 @@ function createButtons() {
   //create empty string
   for (var x = 0; x < buttons; x++) {
     //add element to be a button
-    sdf += '<div id = "' + x + '" class="ting">' + (x + 1) + '</div>';
+    sdf += '<div id = "' + x + '" class="ting" style="background-color:' + hsls[x] + '">' + clrs[x] + '</div>';
   }
   return sdf;
 }
@@ -134,7 +146,7 @@ function newGame() {
   }
 }
 function playSequence(x) {
-  ButtonBackColor(nums[x], 'hsla(210, 100%, 50%, 1)');
+  ButtonBackColor(nums[x], hslLs[nums[x]]);
   soundBeep('sine', 500, 1, 100);
   x++;
   if (x < nums.length) {
@@ -153,6 +165,25 @@ function updateScore() {
 }
 function updateProgress() {
   document.getElementById('pa').style.left = (((score / threshold) * 100) - 100).toFixed(2) + '%';
+}
+function endUp(num) {
+    //turn the correct button green:
+    ButtonBackColor(nums[combo], hslLs[nums[combo]]);
+    if (num != nums[combo]) {
+      //if the pressed button is not the correct button:
+      //turn the presssed button red:
+      ButtonBackColor(num, hsls[num]);
+      //user win = false!
+      Win = 0;
+      //you only lose if you get one wrong
+      //end the round now regardless of how many more clicks are left in this level.
+      combo = (level - 1);
+    }
+    combo++;
+    if (combo >= level) {
+      endTurn();
+    }
+    soundBeep('sine', 750, 1, 100);
 }
 function endTurn() {
   combo = 0;
@@ -207,10 +238,10 @@ function levelChange() {
 function ButtonBackColor(a, zColor) {
   if (document.getElementById(a)) {
     document.getElementById(a).style.transition = '0s';
-    document.getElementById(a).style.backgroundColor = zColor;
-    window.setTimeout(function() {
+    document.getElementById(a).style.backgroundColor = hslLs[a];
+    window.setTimeout(function(){
       document.getElementById(a).style.transition = '.3s';
-      document.getElementById(a).style.backgroundColor = 'transparent';
+      document.getElementById(a).style.backgroundColor = hsls[a];
     }, (t * .5));
   }
 }
