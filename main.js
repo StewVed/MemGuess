@@ -53,7 +53,7 @@ function createButtons() {
   //create empty string
   for (var x = 0; x < buttons; x++) {
     //add element to be a button
-    sdf += '<div id = "' + x + '" class="ting" style="background-color:' + hsls[x] + '">' + clrs[x] + '</div>';
+    sdf += '<div id = "' + x + '" class="ting" style="background-color:' + 'hsl(' + hslClrs[x][0] + ', 100%, ' + hslClrs[x][1] + '%)' + '">' + clrs[x] + '</div>';
   }
   return sdf;
 }
