@@ -1,30 +1,22 @@
 /*
   A 'simple' memory and guessing game by StewVed.
 */
-var nums = [], globVol = .33 //the volume of the beeps in the game.
-, randing = 0 //whether the game is generating and playing the new number sequence
-, mem = 1 //memory or guessing mode
-, buttons = 4 //how many buttons to use in the game - 4 by default
-, level = 1 //starting/current level
+var nums = []
+, globVol = .33 //the volume of the beeps in the game.
+, randing = 0   //whether the game is generating and playing the new number sequence
+, mem = 1       //memory or guessing mode
+, buttons = 4   //how many buttons to use in the game - 4 by default
+, level = 1     //starting/current level
 , threshold = 4 //turns until the next level up/down
-, turns = 0 //the total number of turns played this game
-, combo = 0 //the current combo nunmber of the turn
-, score = 0 //current score for this level
-, t = 600 //for how long something takes to animate... pause time.
-, playing //disregard any button clicks while the combo is playing.
-, saveY
-, clrs = ['blue', 'yellow', 'green', 'red']
-, hsls = [
-   'hsl(220, 100%, 50%)'
- , 'hsl(60, 100%, 48%)'
- , 'hsl(120, 100%, 45%)'
- , 'hsl(0, 100%, 50%)']
- , hslLs = [
-   'hsl(220, 100%, 80%)'
- , 'hsl(60, 100%, 80%)'
- , 'hsl(120, 100%, 75%)'
- , 'hsl(0, 100%, 80%)']
- ;
+, turns = 0     //the total number of turns played this game
+, combo = 0     //the current combo nunmber of the turn
+, score = 0     //current score for this level
+, t = 600       //for how long something takes to animate... pause time.
+, playing       //disregard any button clicks while the combo is playing.
+, saveY         //whether the user allows saving to HTML5 local storage
+, clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
+, hslClrs = [[220, 50], [60, 48], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
+;
 //user's choice on whether to save data - volume and memory/guess choice, etc.
 function InitMain() {
   //could add customisazions like colors, sounds, shapes, amount of buttons, etc. as well.
@@ -146,7 +138,7 @@ function newGame() {
   }
 }
 function playSequence(x) {
-  ButtonBackColor(nums[x], hslLs[nums[x]]);
+  ButtonBackColor(nums[x], 80);
   soundBeep('sine', 500, 1, 100);
   x++;
   if (x < nums.length) {
@@ -168,11 +160,11 @@ function updateProgress() {
 }
 function endUp(num) {
     //turn the correct button green:
-    ButtonBackColor(nums[combo], hslLs[nums[combo]]);
+    ButtonBackColor(nums[combo], 80);
     if (num != nums[combo]) {
       //if the pressed button is not the correct button:
       //turn the presssed button red:
-      ButtonBackColor(num, hsls[num]);
+      ButtonBackColor(num, 30);
       //user win = false!
       Win = 0;
       //you only lose if you get one wrong
@@ -235,13 +227,14 @@ function levelChange() {
     document.getElementById('pa').style.opacity = '1';
   }, t);
 }
-function ButtonBackColor(a, zColor) {
+function ButtonBackColor(a, zLux) {
   if (document.getElementById(a)) {
     document.getElementById(a).style.transition = '0s';
-    document.getElementById(a).style.backgroundColor = hslLs[a];
+    document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + zLux + '%)'; //hslLs[a];
+
     window.setTimeout(function(){
       document.getElementById(a).style.transition = '.3s';
-      document.getElementById(a).style.backgroundColor = hsls[a];
+      document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + hslClrs[a][1] + '%)'; //hsls[a];
     }, (t * .5));
   }
 }
