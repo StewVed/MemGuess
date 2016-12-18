@@ -31,6 +31,10 @@ function InitMain() {
   //check for saved data. If set, the user has chosed to either save or not save data.
   storageCheck();
   //check if the user has modified the volume level:
+
+  //for the moment, just use the default keyset:
+  keysCurrent = keysDefault;
+  //if there is a saved volume, use it.
   var dataToLoad = storageLoad('vol');
   if (dataToLoad) {
     globVol = parseFloat(dataToLoad);
@@ -48,6 +52,7 @@ function InitMain() {
   resize();
   newGame();
 }
+
 function createButtons() {
   var sdf = '';
   //create empty string
@@ -159,6 +164,7 @@ function updateProgress() {
   document.getElementById('pa').style.left = (((score / threshold) * 100) - 100).toFixed(2) + '%';
 }
 function endUp(num) {
+  if (!randing) {
     //turn the correct button green:
     ButtonBackColor(nums[combo], 80);
     if (num != nums[combo]) {
@@ -176,6 +182,7 @@ function endUp(num) {
       endTurn();
     }
     soundBeep('sine', 750, 1, 100);
+  }
 }
 function endTurn() {
   combo = 0;

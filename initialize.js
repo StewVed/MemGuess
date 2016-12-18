@@ -18,11 +18,11 @@ var keysIgnore = [0, 16, 17, 18, 91, 116, 122];
 /*
  * left,up,right,down,A,B,X,Y   you can add more should your game require it.
 */
-var keysDefault = [37, 38, 39, 40, 0, 0, 0, 0];
+var keysDefault = {100:0,101:1,97:2,98:3};
 /*
  * the currently used keys are loaded on init
 */
-var keysCurrent = [0, 0, 0, 0, 0, 0, 0, 0];
+var keysCurrent;
 //Input events vars to hold the event info:
 var inputType;
 // touch|gamePad|mouse|keyboard - depending on game type you could add GPS or whatever else HTML supports...
@@ -49,8 +49,6 @@ function Init() {
   addEventListeners();
   // initialize the mouse event
   mouseClear();
-  //for the moment, just use the default keyset:
-  keysCurrent = keysDefault;
   //generate sounds natively
   //create waveforms for sounds? for example soundBeep('sine', 1000, 1, 75);
   /*

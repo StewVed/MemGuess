@@ -6,6 +6,7 @@
 */
 var fileList = ['initialize', 'inputs', 'storage', 'main'];
 var isLoaded = 0;
+var isUpdated = 0;
 var loadingVars = [];
 //add service worker registration to the app:
 addServiceWorker();
@@ -210,15 +211,50 @@ function addServiceWorker() {
   if ('serviceWorker'in navigator) {
     //should the user be prompted whether they'd like this made available offline?
     navigator.serviceWorker.register('sw.js').then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      /*
-        let the user know that this is available offline,
-        and offer to 'install' (add to home page) maybe.
-      */
+      //upNotOpen('serviceworker registered.');
     }).catch(function(err) {
-      // registration failed :(
       console.log('ServiceWorker registration failed: ', err);
     });
+
+    //new bit to let the user know if there is an update to the app#
+    navigator.serviceWorker.addEventListener('message', swMessage);
+  }
+}
+//learned from https://serviceworke.rs/message-relay.html
+function swMessage(e) {
+  if (e.data == 'updated') {
+    if (!isUpdated) {
+      isUpdated = 1;
+      window.setTimeout(function() {
+        upNotOpen('<p>app updated!</p>')
+        /*
+          IDEA:
+          swipe up for changelog, swipe dopwn to dismiss.
+        */
+      }, 2000);
+    }
+  }
+}
+function upNotOpen(msg) {
+  var newWindow = document.createElement('div');
+  newWindow.id = 'updateNotice';
+  document.body.appendChild(newWindow);
+  newWindow.innerHTML = msg;
+  newWindow.style.opacity = .9;
+  newWindow.style.top = (document.body.offsetHeight - newWindow.offsetHeight) + 'px';
+  window.setTimeout(function() {
+   upNotClose()
+  }, 5000);
+}
+function upNotClose() {
+  if (document.getElementById('updateNotice')) {
+    document.getElementById('updateNotice').style.opacity = 0;
+    document.getElementById('updateNotice').style.top = document.body.offsetHeight + 'px';
+    window.setTimeout(function() {
+      if (document.getElementById('updateNotice')) {
+        //after a second, once the element is hidden, remove it.
+        document.body.removeChild(document.getElementById('updateNotice'));
+      }
+    }, 1000);
   }
 }

@@ -1,5 +1,5 @@
 body {
-  background-color: antiquewhite;
+  background-color: hsl(34, 78%, 91%);;
   text-align: center;
   box-sizing: border-box;
   overflow: hidden;
@@ -193,7 +193,7 @@ body {
   left: 0;
   height: 100%;
   width: 100%;
-  background-color: antiquewhite;
+  background-color: hsla(34, 78%, 91%, .95);;
 }
 
 .vImg {
@@ -237,7 +237,7 @@ body {
   box-sizing: border-box;
   padding: 1%;
   font-weight: bold;
-  background-color: antiquewhite;
+  background-color: hsla(34, 78%, 91%, .95);;
   opacity: 0;
   transition: opacity .5s;
 }
@@ -303,4 +303,15 @@ body {
   to {
     left: 75%;
   }
+}
+#updateNotice {
+  position: absolute;
+  opaticy: 0;
+  top: 100%;
+  width: 100%;
+  transition: .5s;
+  font-size: 1.2em;
+  font-weight:bold;
+  background-color:hsla(34, 78%, 91%, .9);;
+  text-align: center;
 }

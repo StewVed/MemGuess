@@ -91,19 +91,33 @@ function gamePadsButtonUp(zButton) {
   //and now this would be the same as mouseClick...
   endUp(gamepadReMap[zButton]);
 }
-function keyNum(e) {}
+function keyNum(e) {
+  return e.keyCode || window.event.keyCode;
+}
 function keyDown(e) {
-  var theKey = keyNum(e);
-  if (keysIgnore.indexOf(theKey) != -1) {
+  var theKey = keyNum(e);4
+  if (keysIgnore.indexOf(theKey) === -1) {
     bubbleStop();
+    if(isFinite(keysCurrent[theKey])) {
+      //because there is a 0, I gotta check whether it is null/undefined.
+      endUp(keysCurrent[theKey]);
+    }
     keyVars.push(theKey);
     //simply add the newly pressed key into the WinKeys array.
   }
+  //use this to find out the key code of a key:
+  //document.getElementById('pt').innerHTML = theKey
+
+  //blue   = 100
+  //yellow = 101
+  //green  = 97
+  //red    = 98
+
 }
 function keyRedefine(theKey) {
   // left,up,right,down,A,B,X,Y   you can add more should your game require it.
   var theKey = keyNum(e);
-  if (keysCurrent.indexOf(theKey) != -1) {
+  if (keysIgnore.indexOf(theKey) === -1) {
     bubbleStop();
     keyVars.push(theKey);
     //simply add the newly pressed key into the WinKeys array.
@@ -111,10 +125,13 @@ function keyRedefine(theKey) {
 }
 function keyUp(e) {
   var theKey = keyNum(e);
-  while (keyVars.indexOf(theKey) != -1) {
+
+  if (keysIgnore.indexOf(theKey) === -1) {
     bubbleStop();
-    keyVars.splice(keyVars.indexOf(theKey), 1);
-    //updates array length while delete() doesn't
+    while (keyVars.indexOf(theKey) != -1) {
+      keyVars.splice(keyVars.indexOf(theKey), 1);
+      //updates array length while delete() doesn't
+    }
   }
 }
 function mouseClear() {
@@ -236,7 +253,7 @@ function mouseWheel(e) {/*
 }
 function mouseClick() {
   var targ = mouseVars.targetStart;
-  if (!randing && isFinite(parseInt(targ.id))) {
+  if (isFinite(parseInt(targ.id))) {
     //is a button
     endUp(targ.id);
   } else if (targ.id === 'mem') {
