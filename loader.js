@@ -204,7 +204,7 @@ function loaderReHeight() {
   document.getElementById('loading').style.top = ((window.innerHeight - document.getElementById('loading').offsetHeight) / 2) + 'px';
 }
 /*serviceworker (mostly) learned from:
-https://www.w3.org/TR/service-workers/
+https://w3c.github.io/ServiceWorker/
 https://developers.google.com/web/fundamentals/getting-started/primers/service-workers
 https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
 */
@@ -272,7 +272,7 @@ function swMessage(e) {
     if (!isUpdated) {
       isUpdated = 1;
       window.setTimeout(function() {
-       upNotOpen('<p>update downloaing...<br>Restart app to update.</p>')
+       upNotOpen('<p>update downloading...<br>Restart app to update.</p>')
       }, 3000);
     }
   }
@@ -283,7 +283,7 @@ function upNotOpen(msg) {
   document.body.appendChild(newWindow);
   newWindow.innerHTML = msg;
   newWindow.style.opacity = .9;
-  newWindow.style.top = (document.body.offsetHeight - newWindow.offsetHeight) + 'px';
+  newWindow.style.top = (window.innerHeight - newWindow.offsetHeight) + 'px';
   window.setTimeout(function() {
    upNotClose()
   }, 5000);
@@ -291,7 +291,7 @@ function upNotOpen(msg) {
 function upNotClose() {
   if (document.getElementById('updateNotice')) {
     document.getElementById('updateNotice').style.opacity = 0;
-    document.getElementById('updateNotice').style.top = document.body.offsetHeight + 'px';
+    document.getElementById('updateNotice').style.top = window.innerHeight + 'px';
     window.setTimeout(function() {
       if (document.getElementById('updateNotice')) {
         //after a second, once the element is hidden, remove it.

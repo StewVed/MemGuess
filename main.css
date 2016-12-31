@@ -1,15 +1,13 @@
 body {
-  background-color: hsl(34, 78%, 91%);;
+  /* background-color: antiquewhite; */
   text-align: center;
   box-sizing: border-box;
   overflow: hidden;
   margin: 0;
-  transition: 0.25s;
   font-family: sans-serif;
 }
 
 .ting {
-  transition: .2s;
   border: black solid;
   font-size: .5em;
   font-weight: bold;

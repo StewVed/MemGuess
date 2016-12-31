@@ -15,7 +15,7 @@ var nums = []
 , playing       //disregard any button clicks while the combo is playing.
 , saveY         //whether the user allows saving to HTML5 local storage
 , clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
-, hslClrs = [[220, 50], [60, 48], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
+, hslClrs = [[215, 50], [60, 45], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
 ;
 //user's choice on whether to save data - volume and memory/guess choice, etc.
 function InitMain() {
@@ -143,7 +143,7 @@ function newGame() {
   }
 }
 function playSequence(x) {
-  ButtonBackColor(nums[x], 80);
+  ButtonBackColor(nums[x], 90);
   soundBeep('sine', 500, 1, 100);
   x++;
   if (x < nums.length) {
@@ -166,11 +166,11 @@ function updateProgress() {
 function endUp(num) {
   if (!randing) {
     //turn the correct button green:
-    ButtonBackColor(nums[combo], 80);
+    ButtonBackColor(nums[combo], 90);
     if (num != nums[combo]) {
       //if the pressed button is not the correct button:
       //turn the presssed button red:
-      ButtonBackColor(num, 30);
+      ButtonBackColor(num, 25);
       //user win = false!
       Win = 0;
       //you only lose if you get one wrong

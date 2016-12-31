@@ -3,12 +3,11 @@
   "short_name": "MemGuess",
   "description": "A simple memory and guessing webgame by StewVed",
   "lang": "en",
-  "scope": "/",
-  "start_url": "index.html",
   "display": "fullscreen",
-  "theme_color": "antiquewhite",
-  "background_color": "antiquewhite",
-  "icons": [{
+  "theme_color": "white",
+  "background_color": "white",
+  "icons": [
+  {
     "src": "favicon.svg"
   }, {
     "src": "favicon.png",

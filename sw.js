@@ -1,4 +1,4 @@
-var CACHE = 'MemGuess-2016-12-27';
+var CACHE = 'MemGuess-2016-12-31';
 //https://serviceworke.rs/strategy-cache-only_service-worker_doc.html
 self.addEventListener('install', function(event) {
   event.waitUntil(caches.open(CACHE).then(function(cache) {
@@ -20,15 +20,15 @@ self.addEventListener('activate', function(event) {
       }
     })).then(function() {
       console.log('SW: new version active.');
-      sendMessage(self, 'updated');
+      sendMessage('updated');
     });
   }));
 })
 
-function sendMessage(me, msg) {
+function sendMessage(msg) {
   console.log('SW: sendMessage try: ' + msg);
 
-  me.clients.matchAll().then(function(clients) {
+  self.clients.matchAll().then(function(clients) {
     console.log('SW: in forEach clients..');
     clients.forEach(function(client) {
       client.postMessage(msg);
