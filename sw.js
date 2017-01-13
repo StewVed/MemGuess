@@ -1,38 +1,37 @@
-var CACHE = 'MemGuess-2016-12-31';
-//https://serviceworke.rs/strategy-cache-only_service-worker_doc.html
+var zAppCache = 'MemGuess-2017-01-13';
+
 self.addEventListener('install', function(event) {
-  event.waitUntil(caches.open(CACHE).then(function(cache) {
-    return cache.addAll(['./', './appmanifest', './index.html', './initialize.js', './inputs.js', './loader.js', './main.css', './main.js', './storage.js'//do I not need the favicons?!?
-    ]).then(function() {
-      console.log('SW: app updated. awaiting activation');
-    });
-  }));
+  event.waitUntil(caches.open(zAppCache).then(function(cache) {
+    return cache.addAll([
+        './'
+      , './initialize.js'
+      , './inputs.js'
+      , './loader.js'
+      , './main.css'
+      , './main.js'
+      , './storage.js'
+    ])
+  }))
 });
 self.addEventListener('fetch', function(event) {
-  //never bother checking online
-  event.respondWith(caches.match(event.request));
+  event.respondWith(
+    caches.match(event.request).then(function(cacheResponse) {
+      return cacheResponse || fetch(event.request).then(function(netResponse) {
+        return caches.open(zAppCache).then(function(cache) {
+          cache.put(event.request, netResponse.clone());
+          console.log('flle not found in cache!');
+          return netResponse;
+        });
+      });
+    })
+  );
 });
 self.addEventListener('activate', function(event) {
   event.waitUntil(caches.keys().then(function(cacheNames) {
     return Promise.all(cacheNames.map(function(cacheName) {
-      if (cacheName !== CACHE) {
+      if (cacheName !== zAppCache) {
         return caches.delete(cacheName);
       }
-    })).then(function() {
-      console.log('SW: new version active.');
-      sendMessage('updated');
-    });
-  }));
-})
-
-function sendMessage(msg) {
-  console.log('SW: sendMessage try: ' + msg);
-
-  self.clients.matchAll().then(function(clients) {
-    console.log('SW: in forEach clients..');
-    clients.forEach(function(client) {
-      client.postMessage(msg);
-      console.log('SW: clients.client.id is ' + client.id);
-    });
-  });
-}
+    }))
+  }))
+});

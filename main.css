@@ -235,25 +235,9 @@ body {
   box-sizing: border-box;
   padding: 1%;
   font-weight: bold;
-  background-color: hsla(34, 78%, 91%, .95);;
+  background-color: hsla(0, 0%, 100%, .95);
   opacity: 0;
   transition: opacity .5s;
-}
-
-#notyClose {
-  position: absolute;
-  top: -12px;
-  left: calc(100% - 22px);
-  height: 26px;
-  width: 27px;
-  border: 2px solid hsl(0, 0%, 0%);
-  font-weight: bold;
-  padding: 1%;
-  line-height: 100%;
-  0% */ font-size: 1.2em;
-  font-size: 1.7em;
-  border-radius: 640px;
-  margin: 0;
 }
 
 .loadC {
@@ -290,26 +274,38 @@ body {
   float: none;
   animation: Vom .5s ease-in-out alternate infinite;
   width: 25%;
-  background: radial-gradient(farthest-side at 50% 50%, hsl(0, 100%, 50%), hsla(0, 100%, 50%, 0));
+  background: radial-gradient(farthest-side at 50% 50%, hsl(120, 100%, 50%), hsla(0, 100%, 50%, 0));
 }
 
 @keyframes Vom {
-  from {
-    left: 0%;
-  }
-
-  to {
-    left: 75%;
-  }
+  from {left: 0%;}
+  to {left: 75%;}
 }
+
 #updateNotice {
   position: absolute;
-  opaticy: 0;
-  top: 100%;
+  top: 80%;
   width: 100%;
-  transition: .5s;
+  height: 100%;
+  border-top: 4px solid hsl(210, 100%, 50%);
+  transition: .7s ease-in;
+  animation: popupBouncer .6s ease-in-out;
   font-size: 1.2em;
-  font-weight:bold;
-  background-color:hsla(34, 78%, 91%, .9);;
+  font-weight: bold;
+  background-color: hsla(0, 0%, 100%, .9);
   text-align: center;
+}
+@keyframes popupBouncer {
+  0% {top: 100%;}
+  60% {top: 75%;}
+  100% {top: 80%;}
+}
+
+#updateClose {
+  position: absolute;
+  left: calc(100% - 32px);
+  font-weight: bold;
+  padding: 3px 8px;
+  line-height: 100%;
+  font-size: 1.5em;
 }

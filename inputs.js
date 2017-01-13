@@ -210,10 +210,10 @@ function mouseMove(e) {
   if (mouseVars.type === 'vol') {
     volMove();
   } else if (mouseVars.type === 'click') {
-    if (((mouseVars.xStart + 10) < e.clientX)
-        || ((mouseVars.xStart - 10) > e.clientX)
-        || ((mouseVars.yStart + 10) < e.clientY)
-        || ((mouseVars.yStart - 10) > e.clientY)
+    if (((mouseVars.xStart + 25) < e.clientX)
+        || ((mouseVars.xStart - 25) > e.clientX)
+        || ((mouseVars.yStart + 25) < e.clientY)
+        || ((mouseVars.yStart - 25) > e.clientY)
        ) {
       mouseVars.type = 'drag';
       window.clearTimeout(mouseVars.clickTimer);
