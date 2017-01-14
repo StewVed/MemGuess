@@ -3,6 +3,7 @@
 */
 var nums = []
 , globVol = .33 //the volume of the beeps in the game.
+, animing = 0
 , randing = 0   //whether the game is generating and playing the new number sequence
 , mem = 1       //memory or guessing mode
 , buttons = 4   //how many buttons to use in the game - 4 by default
@@ -28,6 +29,8 @@ function InitMain() {
     array is populated before the user chooses, so it is fixed.
 */
   document.body.innerHTML = '<div id="cont">' + '<div id="game">' + createButtons() + '</div>' + '<div id="score">' + createScore() + '</div>' + '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>' + '</div>' + '';
+  //add event to tell when the css transition has finished
+  document.getElementById('pa').addEventListener('transitionend', transEnd, false);
   //check for saved data. If set, the user has chosed to either save or not save data.
   storageCheck();
   //check if the user has modified the volume level:
@@ -49,6 +52,7 @@ function InitMain() {
       swapButton('ges', 'mem');
     }
   }
+  animing = 0;
   resize();
   newGame();
 }
@@ -127,19 +131,13 @@ function newGame() {
   playing = null ;
   Win = 1;
   turn = 0;
-  randing = 1;
-  randNums();
   //generate random array
-  //check 
-  if (level != nums.length) {
-    var wtf = 'ffs';
-  }
+  randNums();
   if (mem) {
+    randing = 1;
     playing = window.setTimeout(function() {
       playSequence(0);
     }, (t * 2));
-  } else {
-    randing = 0;
   }
 }
 function playSequence(x) {
@@ -153,7 +151,7 @@ function playSequence(x) {
   } else {
     playing = window.setTimeout(function() {
       randing = 0;
-    }, (t / 2));
+    }, (t * .5));
   }
 }
 function updateScore() {
@@ -161,10 +159,17 @@ function updateScore() {
   document.getElementById('pt').innerHTML = 'Level: ' + level;
 }
 function updateProgress() {
+  animing = 1;
   document.getElementById('pa').style.left = (((score / threshold) * 100) - 100).toFixed(2) + '%';
 }
+function transEnd() {
+  if (animing === 2) {
+    levelChange();
+  }
+  animing = 0;
+}
 function endUp(num) {
-  if (!randing) {
+  if (!randing && !animing) {
     //turn the correct button green:
     ButtonBackColor(nums[combo], 90);
     if (num != nums[combo]) {
@@ -198,7 +203,6 @@ function endTurn() {
       soundBeep('sine', 500, 1, 100)
     }, 100);
   }
-  updateProgress();
   if (score >= threshold) {
     end1(1, '100%');
     window.setTimeout(function() {
@@ -210,6 +214,9 @@ function endTurn() {
       soundBeep('sine', 330, 1, 100);
     }, 200);
   }
+  else {
+    updateProgress();
+  }
   updateScore();
   newGame();
 }
@@ -219,20 +226,17 @@ function end1(num, x) {
   if (level < 1) {
     level = 1;
   }
-  window.setTimeout(function() {
+    animing = 2;
     document.getElementById('pa').style.left = x;
-  }, t);
-  window.setTimeout(function() {
-    levelChange();
-  }, t * 2);
 }
 function levelChange() {
-  // hide the progressbars, move to center, show bars again
-  document.getElementById('pa').style.opacity = '0';
+  //no transition, move to center, replace transition
+  document.getElementById('pa').style.transition = '0s';
   document.getElementById('pa').style.left = '-100%';
   window.setTimeout(function() {
-    document.getElementById('pa').style.opacity = '1';
-  }, t);
+    document.getElementById('pa').style.transition = 'left .5s';
+    animing = 0;
+  }, 0);
 }
 function ButtonBackColor(a, zLux) {
   if (document.getElementById(a)) {

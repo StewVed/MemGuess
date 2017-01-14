@@ -1,4 +1,4 @@
-var zAppCache = 'MemGuess-2017-01-13';
+var zAppCache = 'MemGuess-2017-01-14';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(caches.open(zAppCache).then(function(cache) {
