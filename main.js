@@ -1,7 +1,6 @@
-/*
-  A 'simple' memory and guessing game by StewVed.
-*/
-var nums = []
+var zAppVersion = '2017-04-02' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
+, zAppPrefix = 'mg' //used for global storage to differenciate between apps.
+, nums = []
 , globVol = .33 //the volume of the beeps in the game.
 , animing = 0
 , randing = 0   //whether the game is generating and playing the new number sequence
@@ -17,9 +16,12 @@ var nums = []
 , saveY         //whether the user allows saving to HTML5 local storage
 , clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
 , hslClrs = [[215, 50], [60, 45], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
+, gameVars = {
+    go: 0
+  }
 ;
 //user's choice on whether to save data - volume and memory/guess choice, etc.
-function InitMain() {
+function initContent() {
   //could add customisazions like colors, sounds, shapes, amount of buttons, etc. as well.
   /*
     create the amount of circles that the user will play.
@@ -27,34 +29,24 @@ function InitMain() {
 
     have an array of random numbers pushed into it
     array is populated before the user chooses, so it is fixed.
-*/
-  document.body.innerHTML = '<div id="cont">' + '<div id="game">' + createButtons() + '</div>' + '<div id="score">' + createScore() + '</div>' + '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>' + '</div>' + '';
-  //add event to tell when the css transition has finished
-  document.getElementById('pa').addEventListener('transitionend', transEnd, false);
-  //check for saved data. If set, the user has chosed to either save or not save data.
-  storageCheck();
-  //check if the user has modified the volume level:
-
-  //for the moment, just use the default keyset:
-  keysCurrent = keysDefault;
-  //if there is a saved volume, use it.
-  var dataToLoad = storageLoad('vol');
-  if (dataToLoad) {
-    globVol = parseFloat(dataToLoad);
-    //move the volume slider to the loaded volume
-    volUpdate();
-  }
-  //now check to see if the user has chosen memory or guessing mode:
-  dataToLoad = storageLoad('mem');
-  if (dataToLoad) {
-    mem = parseInt(dataToLoad);
-    if (!mem) {
-      swapButton('ges', 'mem');
-    }
-  }
-  animing = 0;
-  resize();
-  newGame();
+  */
+  var stuff =
+    '<div id="cont">'
+    + '<div id="gArea">' + createButtons() + '</div>'
+    + '<div id="score" style="vertical-align:middle;margin:0;padding:0;overflow:hidden;float:left;">'
+      + '<div id="scoreInner" style="width:100%;">'
+        //+ '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>'
+        + '<button id="pc" type="button" class="uButtons">&nbsp;'
+        + '<div id="pa">'
+          + '<div id="pi"></div>'
+          + '<div id="pf"></div>'
+        + '</div>'
+        + '<div id="pt">Level: 1</div>' + '</button>'
+      + '</div>'
+    + '</div>'
+    //+ '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>'
+  + '</div>';
+  return stuff;
 }
 
 function createButtons() {
@@ -66,59 +58,56 @@ function createButtons() {
   }
   return sdf;
 }
+
+function runApp() {
+  gameVars.tone = audioCtx.createOscillator();
+  gameVars.vol = audioCtx.createGain();
+  gameVars.pan = audioCtx.createPanner();
+  gameVars.lisn = audioCtx.listener; //this one doesn't appear to need connecting?
+  //
+  gameVars.tone.connect(gameVars.vol);
+  gameVars.vol.connect(gameVars.pan);
+  gameVars.tone.type = 'sine';
+
+  //check to see if the user has chosen memory or guessing mode:
+  dataToLoad = storageLoad('mem');
+  if (dataToLoad) {
+    mem = parseInt(dataToLoad);
+  }
+  //add event to tell when the css transition has finished
+  document.getElementById('pa').addEventListener('transitionend', transEnd, false);
+  animing = 0;
+  resize();
+  newGame();
+}
 function createScore() {
-  //document.getElementById('score').innerHTML =
   return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">Level: 1</div>' + '</button>' + '</div>' + '<div style="float:left;margin-right:6px;font-size:100%;transform:scaleX(2);">&#9698;</div>' + '';
 }
 function createSettings() {
-  return '<div id="scoreText">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '<br>' + '<div class="vImg">&#9698;</div>' + '<div id="vol%" style="display:inline-block;">33%</div>' + '<div id="vol-Cv" class="sliderCont">&nbsp;' + '<div id="vol-Iv" class="sliderInner">&nbsp;</div>' + //Off ♫ &#128266;
-  '</div>' + '';
+  return '<div id="scoreText" style="clear:both;">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '<br>' + '<div class="vImg">&#9698;</div>' + '<div id="vol%" style="display:inline-block;">33%</div>' + '<div id="vol-Cv" class="sliderCont">&nbsp;' + '<div id="vol-Iv" class="sliderInner">&nbsp;</div>' + '</div>';
 }
-function resize() {
-  //maybe I should make the game bit a squre, then have the scores bit
-  //however amount of space is left? what if the available area is square?
-  //regardless, let's begin by finding the smallest size out of length and width:
-  var a = window.innerWidth;
-  var b = window.innerHeight;
-  document.body.style.width = a + 'px';
-  document.body.style.height = b + 'px';
-  var portraitLayout = 1;
-  if (a > b) {
-    var c = a;
-    a = b;
-    b = c;
-    portraitLayout = 0;
+
+function settingsExtra() {
+  var newElem = document.createElement('div');
+  newElem.id = 'setEx';
+  newElem.style.cssText = 'margin-bottom:0.5em;';
+
+  newElem.innerHTML =
+    '<div id="scoreText">Turn:0</div>'
+  + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>'
+  + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>';
+
+  document.getElementById('settns').insertBefore(newElem, document.getElementById('fs'));
+  //document.getElementById('settns').appendChild(newElem);
+
+  if (!mem) {
+    swapButton('ges', 'mem');
   }
-  //simple method of scaling the entire thing - make the font size a percent of the space.
-  document.getElementById('game').style.width = document.getElementById('game').style.height = document.getElementById('settns').style.width = document.getElementById('settns').style.height = document.getElementById('scoreInner').style.width = document.getElementById('scoreInner').style.height = a + 'px';
-  document.getElementById('game').style.fontSize = a * 1.5 + '%';
-  /* 
-     make the circles the correct size.
-  */
-  if (document.getElementById('0')) {
-    for (var x = 0; x < buttons; x++) {
-      var y = document.getElementById(x).style;
-      y.width = y.height = y.borderRadius = y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
-      y.padding = y.borderWidth = Math.floor(a * .02) + 'px';
-      y.margin = Math.floor(a * .01) + 'px';
-    }
-  }
-  document.getElementById('scoreInner').style.fontSize = document.getElementById('settns').style.fontSize = a + '%';
-  if (portraitLayout) {
-    document.getElementById('scoreInner').style.transform = 'rotate(0deg)';
-    document.getElementById('score').style.width = '100%';
-    document.getElementById('score').style.height = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
-    document.getElementById('cont').style.top = Math.round((b / 2) - (document.getElementById('cont').offsetHeight / 2)) + 'px';
-    document.getElementById('cont').style.left = '0px';
-  } else {
-    //score is beside the game
-    document.getElementById('scoreInner').style.transform = 'rotate(-90deg)';
-    document.getElementById('score').style.height = '100%';
-    document.getElementById('score').style.width = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
-    document.getElementById('cont').style.left = Math.round((b / 2) - (document.getElementById('cont').offsetWidth / 2)) + 'px';
-    document.getElementById('cont').style.top = '0px';
-  }
+
+  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
 }
+
+
 function randNums() {
   nums = [];
   for (var x = 0; x < level; x++) {
@@ -155,7 +144,6 @@ function playSequence(x) {
   }
 }
 function updateScore() {
-  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
   document.getElementById('pt').innerHTML = 'Level: ' + level;
 }
 function updateProgress() {
@@ -262,59 +250,4 @@ function swapButton(zEnable, zDisable) {
   updateScore();
   updateProgress();
   storageSave('mem', mem);
-}
-// fullscreen handling from webtop then simplified for this project...
-function fullScreenToggle() {
-  var isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-  if (isFS) {
-    killFS.call(document, function() {});
-    if (document.getElementById('fs')) {
-      document.getElementById('fs').classList.remove('fsd')
-      document.getElementById('fs').classList.add('fsu');
-    }
-  } else {
-    getFS.call(document.documentElement, function() {});
-    if (document.getElementById('fs')) {
-      document.getElementById('fs').classList.remove('fsu')
-      document.getElementById('fs').classList.add('fsd');
-    }
-  }
-}
-function toggleSettings() {
-  if (document.getElementById('settns').style.visibility === 'hidden') {
-    document.getElementById('settns').style.visibility = 'visible';
-  } else {
-    document.getElementById('settns').style.visibility = 'hidden';
-    newGame();
-  }
-}
-// example: soundBeep('sine', 500, 1, 100);setTimeout(function(){soundBeep('sine', 750, 1, 100)}, 100);
-function soundBeep(type, frequency, volume, duration) {
-  //make the volume comform to the globally set volume
-  volume *= globVol;
-  volume *= .5;
-  //make the entire game queiter.
-  //create a HTML5 audio occilator thingy
-  var zOscillator = WinAudioCtx.createOscillator();
-  //create a HTML5 audio volume thingy
-  var zGain = WinAudioCtx.createGain();
-  //link the volume to the occilator
-  zOscillator.connect(zGain);
-  zGain.connect(WinAudioCtx.destination);
-  //set up the audio beep to what is needed:
-  zOscillator.type = type;
-  //default = 'sine' — other values are 'square', 'sawtooth', 'triangle' and 'custom'
-  zOscillator.frequency.value = frequency;
-  zGain.gain.value = volume;
-  //start the audio beep, and set a timeout to stop it:
-  zOscillator.start();
-  window.setTimeout(function() {
-    window.setTimeout(function() {
-      zOscillator.stop()
-    }, 25);
-    //stop once the volume is riiiight down.
-    zGain.gain.value = 0.001;
-    //hopefully stop that cilck at the end that can happen.
-  }, duration);
-  //default to qurter of a second for the beep if no time is specified
 }
