@@ -94,34 +94,36 @@ function anEvent() {
   //gameVars.go = 1; //obviously, you can call it whatever you want...lol
 }
 
-function resizeEvents(a ,b ,portraitLayout) {
+function resizeEvents() {
+  var z = resizeCheckOrientation();
   //simple method of scaling the entire thing - make the font size a percent of the space.
-  document.getElementById('gArea').style.width = document.getElementById('gArea').style.height = document.getElementById('scoreInner').style.width = document.getElementById('scoreInner').style.height = a + 'px';
-  document.getElementById('gArea').style.fontSize = a * 1.5 + '%';
+  document.getElementById('gArea').style.width = document.getElementById('gArea').style.height = document.getElementById('scoreInner').style.width = document.getElementById('scoreInner').style.height = z[0] + 'px';
+  document.getElementById('gArea').style.fontSize = z[0] * 1.5 + '%';
   /*
      make the circles the correct size.
   */
  if (document.getElementById('0')) {
     for (var x = 0; x < buttons; x++) {
       var y = document.getElementById(x).style;
-      y.width = y.height = y.borderRadius = y.lineHeight = Math.floor((a / 2) - (a * .1)) + 'px';
-      y.padding = y.borderWidth = Math.floor(a * .02) + 'px';
-      y.margin = Math.floor(a * .01) + 'px';
+      y.width = y.height = y.borderRadius = y.lineHeight = Math.floor((z[0] / 2) - (z[0] * .1)) + 'px';
+      y.padding = y.borderWidth = Math.floor(z[0] * .02) + 'px';
+      y.margin = Math.floor(z[0] * .01) + 'px';
     }
   }
-  document.getElementById('scoreInner').style.fontSize = a + '%';
-  if (portraitLayout) {
+  //debugger;
+  document.getElementById('scoreInner').style.fontSize = z[0] + '%';
+  if (z[2]) {
     document.getElementById('scoreInner').style.transform = 'rotate(0deg)';
     document.getElementById('score').style.width = '100%';
-    document.getElementById('score').style.height = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
-    document.getElementById('cont').style.top = Math.round((b / 2) - (document.getElementById('cont').offsetHeight / 2)) + 'px';
+    document.getElementById('score').style.height = document.getElementById('pc').offsetHeight + Math.round(z[1] * .03) + 'px';
+    document.getElementById('cont').style.top = Math.round((z[1] / 2) - (document.getElementById('cont').offsetHeight / 2)) + 'px';
     document.getElementById('cont').style.left = '0px';
   } else {
     //score is beside the game
     document.getElementById('scoreInner').style.transform = 'rotate(-90deg)';
     document.getElementById('score').style.height = '100%';
-    document.getElementById('score').style.width = document.getElementById('pc').offsetHeight + Math.round(b * .03) + 'px';
-    document.getElementById('cont').style.left = Math.round((b / 2) - (document.getElementById('cont').offsetWidth / 2)) + 'px';
+    document.getElementById('score').style.width = document.getElementById('pc').offsetHeight + Math.round(z[1] * .03) + 'px';
+    document.getElementById('cont').style.left = Math.round((z[1] / 2) - (document.getElementById('cont').offsetWidth / 2)) + 'px';
     document.getElementById('cont').style.top = '0px';
   }
 }
@@ -129,3 +131,9 @@ function resizeEvents(a ,b ,portraitLayout) {
 function sliderEvents(sliderPercent, sve) {
   //volume control in Settings is already done.
 }
+
+function settinsCloseEvent() {
+  //if something needs to happen when the user closes settings, here is where to put it.
+  newGame();
+}
+
