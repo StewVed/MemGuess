@@ -1,8 +1,7 @@
-//var baseLocation = window.location.href;
+//hopefully this .. will ALWAYS use the base directory regardles of browser.
+//if not, fool with window.location.host or window.location.origin;
 var gs = '../globalscripts/'
-//gs = 'http://127.0.0.1/edsa-github/globalscripts/'
 //Load up the css style files first, which includes the loading styles.
-
 , cssList = [
     [gs, 'gstyles', 'css', 'c']
   , ['', 'styles', 'css', 'c']
