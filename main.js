@@ -1,7 +1,7 @@
-var zAppVersion = '2017-04-02' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
+var zAppVersion = '2017-05-27' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
 , zAppPrefix = 'mg' //used for global storage to differenciate between apps.
 , nums = []
-, globVol = .33 //the volume of the beeps in the game.
+//, globVol = .33 //the volume of the beeps in the game. done in GlobalScripts.
 , animing = 0
 , randing = 0   //whether the game is generating and playing the new number sequence
 , mem = 1       //memory or guessing mode
@@ -32,20 +32,16 @@ function initContent() {
   */
   var stuff =
     '<div id="cont">'
-    + '<div id="gArea">' + createButtons() + '</div>'
-    + '<div id="score" style="vertical-align:middle;margin:0;padding:0;overflow:hidden;float:left;">'
-      + '<div id="scoreInner" style="width:100%;">'
-        //+ '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>'
-        + '<button id="pc" type="button" class="uButtons">&nbsp;'
+      + createButtons()
+      + '<button id="pc" type="button" class="uButtons">'
         + '<div id="pa">'
           + '<div id="pi"></div>'
           + '<div id="pf"></div>'
         + '</div>'
-        + '<div id="pt">Level: 1</div>' + '</button>'
-      + '</div>'
+        + '<div id="pt">1</div>'
+      + '</button>'
     + '</div>'
-    //+ '<div id="settns" style="visibility:hidden;">' + createSettings() + '</div>'
-  + '</div>';
+    ;
   return stuff;
 }
 
@@ -54,7 +50,7 @@ function createButtons() {
   //create empty string
   for (var x = 0; x < buttons; x++) {
     //add element to be a button
-    sdf += '<div id = "' + x + '" class="ting" style="background-color:' + 'hsl(' + hslClrs[x][0] + ', 100%, ' + hslClrs[x][1] + '%)' + '">' + clrs[x] + '</div>';
+    sdf += '<button id = "' + x + '" class="ting" style="background-color:' + 'hsl(' + hslClrs[x][0] + ', 100%, ' + hslClrs[x][1] + '%)' + '">' + clrs[x] + '</button>';
   }
   return sdf;
 }
@@ -81,7 +77,7 @@ function runApp() {
   newGame();
 }
 function createScore() {
-  return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">Level: 1</div>' + '</button>' + '</div>' + '<div style="float:left;margin-right:6px;font-size:100%;transform:scaleX(2);">&#9698;</div>' + '';
+  return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">1</div>' + '</button>' + '</div>' + '<div style="float:left;margin-right:6px;font-size:100%;transform:scaleX(2);">&#9698;</div>' + '';
 }
 function createSettings() {
   return '<div id="scoreText" style="clear:both;">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '<br>' + '<div class="vImg">&#9698;</div>' + '<div id="vol%" style="display:inline-block;">33%</div>' + '<div id="vol-Cv" class="sliderCont">&nbsp;' + '<div id="vol-Iv" class="sliderInner">&nbsp;</div>' + '</div>';
@@ -144,7 +140,7 @@ function playSequence(x) {
   }
 }
 function updateScore() {
-  document.getElementById('pt').innerHTML = 'Level: ' + level;
+  document.getElementById('pt').innerHTML = level;
 }
 function updateProgress() {
   animing = 1;
@@ -228,11 +224,11 @@ function levelChange() {
 }
 function ButtonBackColor(a, zLux) {
   if (document.getElementById(a)) {
-    document.getElementById(a).style.transition = '0s';
+    document.getElementById(a).style.transition = 'background 0s';
     document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + zLux + '%)'; //hslLs[a];
 
     window.setTimeout(function(){
-      document.getElementById(a).style.transition = '.3s';
+      document.getElementById(a).style.transition = 'background .3s';
       document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + hslClrs[a][1] + '%)'; //hsls[a];
     }, (t * .5));
   }

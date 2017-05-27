@@ -1,17 +1,15 @@
 .ting {
   border: black solid;
-  font-size: .5em;
+  font-size: 3.75em;
   font-weight: bold;
-  border-radius: 640px;
+  border-radius: 10em;
   display: inline-block;
   cursor: default;
-}
-
-#game {
-  margin: 0;
+  border-width: .15em;
   padding: 0;
-  float: left;
-  display: inline-block;
+  margin: .5%;
+  width: 47%;
+  height: 47%;
 }
 
 #cont {
@@ -19,21 +17,22 @@
   text-align: center;
 }
 
-
-#scoreText {
-  clear: both;
+#scoreInner {
+  padding: 0 .2em;
 }
 
 #pc {
-  display: inline-block;
-  width: 100%;
+  width: 20%;
+  height: 20%;
+  top: 38%;
+  left: 40%;
   margin: 0;
-  position: relative;
+  position: absolute;
   box-sizing: border-box;
   overflow: hidden;
   background: linear-gradient(#eee, #999);
-  line-height: 100%;
-  padding: 1% 0%;
+  padding: .15em 0;
+  border-width: .15em;
 }
 
 #pa {
@@ -66,5 +65,5 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  padding: .1em;
+  font-size: 3em;
 }
