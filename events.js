@@ -94,7 +94,7 @@ function resizeEvents() {
   //simple method of scaling the entire thing - make the font size a percent of the space.
   document.getElementById('cont').style.width =
   document.getElementById('cont').style.height = z[0] + 'px';
-  resizeSetSize(z[0]);
+  //resizeSetSize(z[0]);
   document.getElementById('pt').style.lineHeight =
   document.getElementById('pt').offsetHeight + 'px';
 }

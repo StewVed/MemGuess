@@ -93,7 +93,7 @@ function settingsExtra() {
   + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>'
   + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>';
 
-  document.getElementById('settns').insertBefore(newElem, document.getElementById('fs'));
+  document.getElementById('settInner').insertBefore(newElem, document.getElementById('fs'));
   //document.getElementById('settns').appendChild(newElem);
 
   if (!mem) {
