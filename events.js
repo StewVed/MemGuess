@@ -97,6 +97,13 @@ function resizeEvents() {
   //resizeSetSize(z[0]);
   document.getElementById('pt').style.lineHeight =
   document.getElementById('pt').offsetHeight + 'px';
+
+  if (document.body.offsetHeight < document.body.offsetWidth) {
+    /* little fix for landscape mode for font size
+       because this is a square app
+    */
+    document.body.style.fontSize = (document.body.offsetHeight * .002) + 'em';
+  }
 }
 
 function sliderEvents(sliderPercent, sve) {

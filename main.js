@@ -1,4 +1,4 @@
-var zAppVersion = '2017-05-27' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
+var zAppVersion = '2019-04-18' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
 , zAppPrefix = 'mg' //used for global storage to differenciate between apps.
 , nums = []
 //, globVol = .33 //the volume of the beeps in the game. done in GlobalScripts.
