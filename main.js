@@ -1,24 +1,23 @@
-var zAppVersion = '2019-04-18' //because no event fires when the SW updates, likely because it is done in the background while the webpage isn't up
-, zAppPrefix = 'mg' //used for global storage to differenciate between apps.
-, nums = []
-//, globVol = .33 //the volume of the beeps in the game. done in GlobalScripts.
-, animing = 0
-, randing = 0   //whether the game is generating and playing the new number sequence
-, mem = 1       //memory or guessing mode
-, buttons = 4   //how many buttons to use in the game - 4 by default
-, level = 1     //starting/current level
-, threshold = 4 //turns until the next level up/down
-, turns = 0     //the total number of turns played this game
-, combo = 0     //the current combo nunmber of the turn
-, score = 0     //current score for this level
-, t = 600       //for how long something takes to animate... pause time.
-, playing       //disregard any button clicks while the combo is playing.
-, saveY         //whether the user allows saving to HTML5 local storage
-, clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
-, hslClrs = [[215, 50], [60, 45], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
-, gameVars = {
-    go: 0
-  }
+var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
+  , nums = []
+  //, globVol = .33 //the volume of the beeps in the game. done in GlobalScripts.
+  , animing = 0
+  , randing = 0   //whether the game is generating and playing the new number sequence
+  , mem = 1       //memory or guessing mode
+  , buttons = 4   //how many buttons to use in the game - 4 by default
+  , level = 1     //starting/current level
+  , threshold = 4 //turns until the next level up/down
+  , turns = 0     //the total number of turns played this game
+  , combo = 0     //the current combo nunmber of the turn
+  , score = 0     //current score for this level
+  , t = 600       //for how long something takes to animate... pause time.
+  , playing       //disregard any button clicks while the combo is playing.
+  , saveY         //whether the user allows saving to HTML5 local storage
+  , clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
+  , hslClrs = [[215, 50], [60, 45], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
+  , gameVars = {
+      go: 0
+    }
 ;
 //user's choice on whether to save data - volume and memory/guess choice, etc.
 function initContent() {
