@@ -4,6 +4,7 @@ var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
   , animing = 0
   , randing = 0   //whether the game is generating and playing the new number sequence
   , mem = 1       //memory or guessing mode
+  , tMem = 1      //for when the user changes the game type
   , buttons = 4   //how many buttons to use in the game - 4 by default
   , level = 1     //starting/current level
   , threshold = 4 //turns until the next level up/down
@@ -22,6 +23,13 @@ var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
 //user's choice on whether to save data - volume and memory/guess choice, etc.
 function initContent() {
   //could add customisazions like colors, sounds, shapes, amount of buttons, etc. as well.
+
+
+  //check to see if the user has chosen memory or guessing mode:
+  dataToLoad = storageLoad('mem');
+  if (dataToLoad) {
+    mem = parseInt(dataToLoad);
+  }
   /*
     create the amount of circles that the user will play.
     give user the choice between simon-says, and let's-guess.
@@ -42,6 +50,7 @@ function initContent() {
     + '</div>'
     ;
   return stuff;
+
 }
 
 function createButtons() {
@@ -64,11 +73,6 @@ function runApp() {
   gameVars.vol.connect(gameVars.pan);
   gameVars.tone.type = 'sine';
 
-  //check to see if the user has chosen memory or guessing mode:
-  dataToLoad = storageLoad('mem');
-  if (dataToLoad) {
-    mem = parseInt(dataToLoad);
-  }
   //add event to tell when the css transition has finished
   document.getElementById('pa').addEventListener('transitionend', transEnd, false);
   animing = 0;
@@ -78,9 +82,6 @@ function runApp() {
 function createScore() {
   return '<div id="scoreInner">' + '<button id="set" type="button" class="uButtons uButtonGrey">&#9776;</button>' + '<button id="pc" type="button" class="uButtons">&nbsp;' + '<div id="pa">' + '<div id="pi"></div>' + '<div id="pf"></div>' + '</div>' + '<div id="pt">1</div>' + '</button>' + '</div>' + '<div style="float:left;margin-right:6px;font-size:100%;transform:scaleX(2);">&#9698;</div>' + '';
 }
-function createSettings() {
-  return '<div id="scoreText" style="clear:both;">Turn:0</div>' + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>' + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" ' + 'style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>' + '<div id="fs" class="uButtons uButtonGrey fsButton">' + '<span id="fsI" class="fsInner">&#9974;</span> Fullscreen' + '</div>' + '<br>' + '<div class="vImg">&#9698;</div>' + '<div id="vol%" style="display:inline-block;">33%</div>' + '<div id="vol-Cv" class="sliderCont">&nbsp;' + '<div id="vol-Iv" class="sliderInner">&nbsp;</div>' + '</div>';
-}
 
 function settingsExtra() {
   var newElem = document.createElement('div');
@@ -88,9 +89,9 @@ function settingsExtra() {
   newElem.style.cssText = 'margin-bottom:0.5em;';
 
   newElem.innerHTML =
-    '<div id="scoreText">Turn:0</div>'
-  + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;width:50%;">Memory</button>'
-  + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight" style="width:40%;padding-left:4px;margin-left:-1px;">Guess</button>';
+    '<div id="scoreText">Turns: 0</div><br>'
+  + '<button id="mem" type="button" class="uButtonLeft uButtons uButtonGreen" style="clear:both;">Memory</button>'
+  + '<button id="ges" type="button" class="uButtons uButtonGrey uButtonRight">Guess</button>';
 
   document.getElementById('settInner').insertBefore(newElem, document.getElementById('fs'));
   //document.getElementById('settns').appendChild(newElem);
@@ -98,8 +99,6 @@ function settingsExtra() {
   if (!mem) {
     swapButton('ges', 'mem');
   }
-
-  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
 }
 
 
@@ -114,7 +113,7 @@ function newGame() {
   window.clearTimeout(playing);
   playing = null ;
   Win = 1;
-  turn = 0;
+  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
   //generate random array
   randNums();
   if (mem) {
@@ -140,6 +139,7 @@ function playSequence(x) {
 }
 function updateScore() {
   document.getElementById('pt').innerHTML = level;
+  document.getElementById('scoreText').innerHTML = 'Turns: ' + turns;
 }
 function updateProgress() {
   animing = 1;
@@ -174,9 +174,9 @@ function endUp(num) {
 }
 function endTurn() {
   combo = 0;
-  turns++;
+  turns ++;
   if (Win) {
-    score++;
+    score ++;
     window.setTimeout(function() {
       soundBeep('sine', 1000, 1, 100)
     }, 100);
@@ -200,6 +200,7 @@ function endTurn() {
   else {
     updateProgress();
   }
+
   updateScore();
   newGame();
 }
@@ -239,10 +240,4 @@ function swapButton(zEnable, zDisable) {
   document.getElementById(zDisable).classList.add('uButtonGrey');
   window.clearTimeout(playing);
   playing = null ;
-  turns = 0;
-  level = 1;
-  score = 0;
-  updateScore();
-  updateProgress();
-  storageSave('mem', mem);
 }

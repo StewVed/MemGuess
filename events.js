@@ -20,12 +20,14 @@ function mouseClickEvents() {
     endUp(targ.id);
   } else if (targ.id === 'mem') {
     //User pressed the 'Memory' button
-    mem = 1;
+    tMem = 1;
     swapButton('mem', 'ges');
+    document.getElementById('settCont').addEventListener('transitionend', settinsCloseEvent);
   } else if (targ.id === 'ges') {
     //User pressed the 'Guess' button
-    mem = 0;
+    tMem = 0;
     swapButton('ges', 'mem');
+    document.getElementById('settCont').addEventListener('transitionend', settinsCloseEvent);
   }
 }
 
@@ -111,9 +113,26 @@ function sliderEvents(sliderPercent, sve) {
 }
 
 function settinsCloseEvent() {
-  //if something needs to happen when the user closes settings, here is where to put it.
-  newGame();
-  //sometimes it seems that animing is stuck on after settings:
-  animing = 0;
+  //fires when the settings windows has closed.
+
+  //remove the event listener now if it is there
+  document.getElementById('settCont').removeEventListener('transitionend', settinsCloseEvent);
+
+  if (document.getElementById('settCont').style.left == 0) {
+    if (tMem != mem) {
+      mem = tMem
+
+      turns = 0;
+      level = 1;
+      score = 0;
+      updateScore();
+      updateProgress();
+      storageSave('mem', mem);
+    }
+    //sometimes it seems that animing is stuck on after settings:
+    animing = 0;
+    newGame();
+  }
+
 }
 
