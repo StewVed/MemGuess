@@ -18,7 +18,6 @@ var gs = '../globalscripts/'
   , [gs, 'settings', 'js']
   , [gs, 'sounds', 'js']
   , [gs, 'storage', 'js']
-  , [gs, 'toolTips', 'js']
   //now add the scripts that are just for this app
   , ['', 'events', 'js']
   , ['', 'main', 'js']

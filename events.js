@@ -123,7 +123,13 @@ function settinsCloseEvent() {
       mem = tMem
 
       turns = 0;
-      level = 1;
+      //Might end up making level an array and then updating the game mode's level
+      if (mem) {
+        level = 3;
+      }
+      else {
+        level = 1;
+      }
       score = 0;
       updateScore();
       updateProgress();

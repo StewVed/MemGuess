@@ -6,7 +6,7 @@ var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
   , mem = 1       //memory or guessing mode
   , tMem = 1      //for when the user changes the game type
   , buttons = 4   //how many buttons to use in the game - 4 by default
-  , level = 1     //starting/current level
+  , level = 3     //starting/current level
   , threshold = 4 //turns until the next level up/down
   , turns = 0     //the total number of turns played this game
   , combo = 0     //the current combo nunmber of the turn
@@ -15,7 +15,7 @@ var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
   , playing       //disregard any button clicks while the combo is playing.
   , saveY         //whether the user allows saving to HTML5 local storage
   , clrs = ['blue', 'yellow', 'green', 'red'] //text of the colors
-  , hslClrs = [[215, 50], [60, 45], [120, 45], [0, 50]] //hsl values of the colors - s is always 100%.
+  , hslClrs = [[215, 45], [60, 40], [120, 40], [0, 45]] //hsl values of the colors - s is always 100%.
   , gameVars = {
       go: 0
     }
@@ -45,7 +45,7 @@ function initContent() {
           + '<div id="pi"></div>'
           + '<div id="pf"></div>'
         + '</div>'
-        + '<div id="pt">1</div>'
+        + '<div id="pt">' + level + '</div>'
       + '</button>'
     + '</div>'
     ;
@@ -124,7 +124,7 @@ function newGame() {
   }
 }
 function playSequence(x) {
-  ButtonBackColor(nums[x], 90);
+  ButtonBackColor(nums[x], 95);
   soundBeep('sine', 500, 1, 100);
   x++;
   if (x < nums.length) {
@@ -144,21 +144,23 @@ function updateScore() {
 function updateProgress() {
   animing = 1;
   document.getElementById('pa').style.left = (((score / threshold) * 100) - 100).toFixed(2) + '%';
+  document.getElementById('pc').classList.add('swellp');
 }
 function transEnd() {
   if (animing === 2) {
     levelChange();
   }
+  document.getElementById('pc').classList.remove('swellp');
   animing = 0;
 }
 function endUp(num) {
   if (!randing && !animing) {
     //turn the correct button green:
-    ButtonBackColor(nums[combo], 90);
+    ButtonBackColor(nums[combo], 95);
     if (num != nums[combo]) {
       //if the pressed button is not the correct button:
       //turn the presssed button red:
-      ButtonBackColor(num, 25);
+      ButtonBackColor(num, 20);
       //user win = false!
       Win = 0;
       //you only lose if you get one wrong
@@ -212,6 +214,7 @@ function end1(num, x) {
   }
     animing = 2;
     document.getElementById('pa').style.left = x;
+    document.getElementById('pc').classList.add('swellp');
 }
 function levelChange() {
   //no transition, move to center, replace transition
@@ -226,10 +229,12 @@ function ButtonBackColor(a, zLux) {
   if (document.getElementById(a)) {
     document.getElementById(a).style.transition = 'background 0s';
     document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + zLux + '%)'; //hslLs[a];
+    document.getElementById(a).classList.add('boingting');
 
     window.setTimeout(function(){
       document.getElementById(a).style.transition = 'background .3s';
       document.getElementById(a).style.backgroundColor = 'hsl(' + hslClrs[a][0] + ', 100%, ' + hslClrs[a][1] + '%)'; //hsls[a];
+      document.getElementById(a).classList.remove('boingting');
     }, (t * .5));
   }
 }
