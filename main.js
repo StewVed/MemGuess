@@ -1,6 +1,5 @@
 var zAppPrefix = 'mg' //used for global storage to differenciate between apps.
   , nums = []
-  //, globVol = .33 //the volume of the beeps in the game. done in GlobalScripts.
   , animing = 0
   , randing = 0   //whether the game is generating and playing the new number sequence
   , mem = 1       //memory or guessing mode
@@ -58,7 +57,7 @@ function createButtons() {
   //create empty string
   for (var x = 0; x < buttons; x++) {
     //add element to be a button
-    sdf += '<button id = "' + x + '" class="ting" style="background-color:' + 'hsl(' + hslClrs[x][0] + ', 100%, ' + hslClrs[x][1] + '%)' + '">' + clrs[x] + '</button>';
+    sdf += '<button id = "' + x + '" class="ting" style="background-color:' + 'hsl(' + hslClrs[x][0] + ', 100%, ' + hslClrs[x][1] + '%)' + '"></button>';
   }
   return sdf;
 }

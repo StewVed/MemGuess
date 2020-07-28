@@ -9,7 +9,24 @@
   margin: 1.5%;
   width: 47%;
   height: 47%;
+  animation: floatBreathe 7s linear infinite;
 }
+
+@keyframes floatBreathe {
+  25% {
+    transform: scale(0.99, 0.99) translateY(.04em);
+  }
+  50% {
+    transform: scale(1, 1) translateX(.04em);
+  }
+  75% {
+    transform: scale(1.01, 1.01) translateY(-.04em);
+  }
+  50% {
+    transform: scale(1, 1) translateX(-.04em);
+  }
+}
+
 .boingting {
   animation: boing .3s linear;
 }
@@ -43,6 +60,7 @@
   background: linear-gradient(#eee, #999);
   padding: .15em 0;
   border-width: .15em;
+  animation: floatBreathe 7s linear infinite;
 }
 
 #pa {

@@ -1,4 +1,4 @@
-var zAppVersion = 'mg2020-07-18';
+var zAppVersion = 'mg2020-07-28';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(caches.open(zAppVersion).then(function(cache) {
@@ -11,6 +11,8 @@ self.addEventListener('install', function(event) {
       , './main.js'
       , './texts.js'
       , './favicon.svg'
+      , './favicon.png'
+      , './favicon256.png'
     ])
   }))
   console.log('memguess files cached.');
